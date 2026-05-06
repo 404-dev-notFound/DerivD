@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  # ── API server (default mode) ──────────────────────────────────────────────
+  api:
+    build: .
+    container_name: fin_intelligence_api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      # Mount artifacts directory so generated files persist across restarts
+      - ./artifacts_data:/app/artifacts_data
+      # Mount sources.json so the evaluator can swap it without rebuilding
+      - ./sources.json:/app/sources.json:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── One-shot pipeline runner (alternative mode) ───────────────────────────
+  # To run pipeline directly:  docker compose run --rm pipeline
+  pipeline:
+    build: .
+    container_name: fin_intelligence_pipeline
+    command: ["python", "run_pipeline.py"]
+    env_file:
+      - .env
+    volumes:
+      - ./sources.json:/app/sources.json:ro
+      # Write artifacts back to host for inspection
+      - .:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    profiles:
+      - pipeline

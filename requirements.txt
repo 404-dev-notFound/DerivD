@@ -5,3 +5,5 @@ beautifulsoup4==4.12.3
 lxml==5.2.2
 python-dotenv==1.0.1
 python-dateutil==2.9.0
+fastapi==0.110.3
+uvicorn[standard]==0.29.0
