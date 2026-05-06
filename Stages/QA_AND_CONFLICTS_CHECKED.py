@@ -16,9 +16,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.llm_client import llm_call, parse_json_response
 from utils.models import QAIssue
 from utils.config import get_low_confidence_threshold, get_max_tokens_for_stage
+from utils.paths import ENTITIES, ENTITY_SENTIMENT, EXTRACTED_CONTENT, QA_REPORT
 
 logger = logging.getLogger(__name__)
-OUTPUT_PATH = "qa_report.json"
+OUTPUT_PATH = QA_REPORT
 STAGE = "qa_and_conflict_detection"
 
 SYSTEM_QA_CONFLICTS = """You are a financial intelligence QA engine. Review extracted content, entities, and sentiment for quality issues and conflicts.
@@ -73,7 +74,7 @@ def run_qa_and_conflicts(
             system=SYSTEM_QA_CONFLICTS,
             user_content=user_content,
             input_artifacts=[
-                "entities.json", "entity_sentiment.json", "extracted_content.json"
+                ENTITIES, ENTITY_SENTIMENT, EXTRACTED_CONTENT
             ],
             output_artifact=OUTPUT_PATH,
             max_tokens=get_max_tokens_for_stage(STAGE),

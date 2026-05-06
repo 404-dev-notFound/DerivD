@@ -15,7 +15,11 @@ __pycache__/
 *.pyd
 .Python
 
-# Generated pipeline artifacts (created at runtime, not baked in)
+# Generated pipeline artifacts — all live in Artifacts/ at runtime, never baked in.
+# Stale artifacts in the image would cause the pipeline to appear to have run
+# when it hasn't (violates the replayability requirement).
+Artifacts/
+reports/
 extracted_content.json
 entities.json
 entity_sentiment.json
@@ -25,7 +29,6 @@ run_metrics.json
 sentiment_timeline.json
 llm_calls.jsonl
 pipeline.log
-reports/
 
 # IDE and OS files
 .vscode/

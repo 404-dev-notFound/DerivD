@@ -31,6 +31,7 @@ from utils.config import (
     get_model_for_stage,
     get_span_overlap_threshold,
 )
+from utils.paths import LLM_CALLS
 
 load_dotenv()
 
@@ -174,7 +175,7 @@ def llm_call(
         "max_tokens_used": effective_max_tokens,
         "error": last_error,
     }
-    with open("llm_calls.jsonl", "a", encoding="utf-8") as f:
+    with open(LLM_CALLS, "a", encoding="utf-8") as f:
         f.write(json.dumps(log_entry) + "\n")
 
     return result

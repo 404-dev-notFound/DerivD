@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.llm_client import llm_call, parse_json_response
 from utils.content_utils import sanitise_text
 from utils.config import get_stage_param
+from utils.paths import EXTRACTED_CONTENT, ENTITIES
 
 logger = logging.getLogger(__name__)
 
@@ -69,8 +70,8 @@ def extract_entities(content_items: list[dict]) -> list[dict]:
                 stage=STAGE,
                 system=SYSTEM_EXTRACT_ENTITIES,
                 user_content=user_text,
-                input_artifacts=["extracted_content.json"],
-                output_artifact="entities.json",
+                input_artifacts=[EXTRACTED_CONTENT],
+                output_artifact=ENTITIES,
                 content_ids=content_ids,
             )
             parsed = parse_json_response(raw_response)

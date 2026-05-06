@@ -4,6 +4,8 @@ validate.py — Evaluator validation script for the financial content intelligen
 
 Run: python validate.py
 Exits 0 on pass, 1 on failure.
+
+All artifacts are expected in the Artifacts/ directory (configured via utils/paths.py).
 """
 from __future__ import annotations
 
@@ -16,6 +18,19 @@ try:
     sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
 except (AttributeError, ValueError):
     pass
+
+# Import centralised path constants so validation always looks in the right place.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from utils.paths import (
+    EXTRACTED_CONTENT,
+    ENTITIES,
+    ENTITY_SENTIMENT,
+    QA_REPORT,
+    COST_REPORT,
+    LLM_CALLS,
+    REPORTS_DIR,
+    SOURCES,
+)
 
 errors: list[str] = []
 warnings: list[str] = []
@@ -46,31 +61,31 @@ def load_json(path: str) -> list | dict | None:
 
 
 print("=" * 60)
-print("Financial Content Intelligence Pipeline — Validation")
+print("Financial Content Intelligence Pipeline -- Validation")
 print("=" * 60)
 
 # 1. Required artifacts exist
 print("\n[1] Required artifacts")
 REQUIRED_FILES = [
-    "sources.json",
-    "extracted_content.json",
-    "entities.json",
-    "entity_sentiment.json",
-    "llm_calls.jsonl",
+    ("sources.json",          SOURCES),
+    ("extracted_content.json", EXTRACTED_CONTENT),
+    ("entities.json",          ENTITIES),
+    ("entity_sentiment.json",  ENTITY_SENTIMENT),
+    ("llm_calls.jsonl",        LLM_CALLS),
 ]
-for path in REQUIRED_FILES:
-    check(os.path.exists(path), f"File exists: {path}")
+for label, path in REQUIRED_FILES:
+    check(os.path.exists(path), f"File exists: {label} ({path})")
 
 # 2. JSON validity
 print("\n[2] JSON validity")
-for path in REQUIRED_FILES:
-    if path.endswith(".json") and os.path.exists(path):
+for label, path in REQUIRED_FILES:
+    if label.endswith(".json") and os.path.exists(path):
         data = load_json(path)
-        check(data is not None, f"Valid JSON: {path}")
+        check(data is not None, f"Valid JSON: {label}")
 
 # 3. Extracted content
 print("\n[3] Extracted content")
-content = load_json("extracted_content.json")
+content = load_json(EXTRACTED_CONTENT)
 if isinstance(content, list):
     sources_seen = {item.get("source_url") for item in content if item.get("source_url")}
     check(len(sources_seen) >= 2, f"At least 2 sources processed (got {len(sources_seen)})")
@@ -92,7 +107,7 @@ else:
 
 # 4. Entities
 print("\n[4] Entities")
-entities = load_json("entities.json")
+entities = load_json(ENTITIES)
 if isinstance(entities, list):
     check(len(entities) >= 5, f"At least 5 entities extracted (got {len(entities)})")
     for ent in entities:
@@ -108,7 +123,7 @@ else:
 
 # 5. Entity sentiment
 print("\n[5] Entity sentiment")
-sentiments = load_json("entity_sentiment.json")
+sentiments = load_json(ENTITY_SENTIMENT)
 if isinstance(sentiments, list):
     valid_sentiments = {"bullish", "bearish", "neutral", "mixed"}
     check(len(sentiments) >= 3, f"At least 3 sentiment records (got {len(sentiments)})")
@@ -127,7 +142,7 @@ else:
 
 # 6. Low-confidence entities flagged in QA
 print("\n[6] Low-confidence entities in QA report")
-qa = load_json("qa_report.json")
+qa = load_json(QA_REPORT)
 if isinstance(entities, list) and isinstance(qa, list):
     low_conf = [e for e in entities if e.get("resolution_confidence", 1.0) < 0.6]
     if low_conf:
@@ -145,9 +160,9 @@ elif qa is None:
 
 # 7. LLM call log
 print("\n[7] LLM call log")
-if os.path.exists("llm_calls.jsonl"):
+if os.path.exists(LLM_CALLS):
     llm_logs = []
-    with open("llm_calls.jsonl", encoding="utf-8") as f:
+    with open(LLM_CALLS, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -179,15 +194,15 @@ if isinstance(qa, list):
 else:
     print("  INFO  qa_report.json not present (optional)")
 
-if os.path.isdir("reports"):
-    report_files = os.listdir("reports")
+if os.path.isdir(REPORTS_DIR):
+    report_files = os.listdir(REPORTS_DIR)
     check(len(report_files) >= 1,
-          f"reports/ has at least 1 file (got {len(report_files)})", is_warning=True)
+          f"Artifacts/reports/ has at least 1 file (got {len(report_files)})", is_warning=True)
 else:
-    print("  INFO  reports/ not present (optional stretch goal)")
+    print("  INFO  Artifacts/reports/ not present (optional stretch goal)")
 
-if os.path.exists("cost_report.json"):
-    cr = load_json("cost_report.json")
+if os.path.exists(COST_REPORT):
+    cr = load_json(COST_REPORT)
     check(isinstance(cr, dict), "cost_report.json is a valid dict", is_warning=True)
     if isinstance(cr, dict):
         check("efficiency_strategy" in cr,
@@ -203,8 +218,8 @@ if warnings:
         print(f"  ! {w}")
 
 if errors:
-    print(f"\nVALIDATION FAILED — {len(errors)} error(s)")
+    print(f"\nVALIDATION FAILED -- {len(errors)} error(s)")
     sys.exit(1)
 else:
-    print("\nVALIDATION PASSED ✓")
+    print("\nVALIDATION PASSED")
     sys.exit(0)

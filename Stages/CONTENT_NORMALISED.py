@@ -12,9 +12,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.content_utils import compute_content_hash
 from utils.models import ContentItem, NumericalData
+from utils.paths import EXTRACTED_CONTENT
 
 logger = logging.getLogger(__name__)
-OUTPUT_PATH = "extracted_content.json"
+OUTPUT_PATH = EXTRACTED_CONTENT
 
 
 def normalise_content(raw_items: list[dict]) -> list[dict]:

@@ -1,42 +1,23 @@
 """
 Stage — RESULTS_FINALISED: Write run_metrics.json + sentiment_timeline.json.
-Also mirror every produced JSON artifact into the Artifacts/ directory
-(if config.efficiency.enable_artifact_mirror is true), so evaluators and
-the REST API can serve artifacts from a single well-known folder.
-
-Fully deterministic — no LLM.
+All artifacts already live in Artifacts/ (written directly by each stage via utils/paths.py).
+No mirroring needed. Fully deterministic — no LLM.
 """
 from __future__ import annotations
 
 import json
 import logging
 import os
-import shutil
 import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.config import get_artifact_mirror_dir, get_low_confidence_threshold
+from utils.config import get_low_confidence_threshold
 from utils.models import RunMetrics, TimelineItem
+from utils.paths import RUN_METRICS, SENTIMENT_TIMELINE, LLM_CALLS
 
 logger = logging.getLogger(__name__)
-METRICS_PATH = "run_metrics.json"
-TIMELINE_PATH = "sentiment_timeline.json"
-
-# JSON artifacts that should appear inside Artifacts/ for evaluator convenience.
-# sources.json is listed because the evaluator can drop a replacement there.
-_MIRROR_FILES = [
-    "sources.json",
-    "extracted_content.json",
-    "entities.json",
-    "entity_sentiment.json",
-    "qa_report.json",
-    "cost_report.json",
-    "run_metrics.json",
-    "sentiment_timeline.json",
-    "llm_calls.jsonl",
-]
 
 
 def finalise(
@@ -50,12 +31,12 @@ def finalise(
     qa_issues: list[dict],
     pipeline_errors: list[str],
 ) -> None:
-    """Write run_metrics.json, sentiment_timeline.json, then mirror artifacts."""
+    """Write run_metrics.json and sentiment_timeline.json into Artifacts/."""
     duration = time.time() - pipeline_start
 
     llm_call_count = 0
-    if os.path.exists("llm_calls.jsonl"):
-        with open("llm_calls.jsonl", encoding="utf-8") as f:
+    if os.path.exists(LLM_CALLS):
+        with open(LLM_CALLS, encoding="utf-8") as f:
             llm_call_count = sum(1 for line in f if line.strip())
 
     threshold = get_low_confidence_threshold()
@@ -64,8 +45,7 @@ def finalise(
         if e.get("resolution_confidence", 1.0) < threshold
     )
 
-    # Dedupe error log while preserving order — fetch_errors and pipeline_errors
-    # can overlap because fetch_errors is forwarded into pipeline_errors upstream.
+    # Dedupe error log — fetch_errors may overlap with pipeline_errors
     combined: list[str] = []
     seen: set[str] = set()
     for err in list(fetch_errors) + list(pipeline_errors):
@@ -88,54 +68,16 @@ def finalise(
         error_log=combined,
     )
 
-    with open(METRICS_PATH, "w", encoding="utf-8") as f:
+    with open(RUN_METRICS, "w", encoding="utf-8") as f:
         json.dump(metrics.model_dump(), f, ensure_ascii=False, indent=2)
-    logger.info(f"[FINALISED] Written → {METRICS_PATH}")
+    logger.info(f"[FINALISED] Written -> {RUN_METRICS}")
 
     timeline = _build_timeline(sentiments, content_items)
-    with open(TIMELINE_PATH, "w", encoding="utf-8") as f:
+    with open(SENTIMENT_TIMELINE, "w", encoding="utf-8") as f:
         json.dump(timeline, f, ensure_ascii=False, indent=2)
     logger.info(
-        f"[FINALISED] Written → {TIMELINE_PATH} ({len(timeline)} timeline items)"
+        f"[FINALISED] Written -> {SENTIMENT_TIMELINE} ({len(timeline)} timeline items)"
     )
-
-    _mirror_artifacts()
-
-
-def _mirror_artifacts() -> None:
-    """
-    Copy every produced JSON artifact to the configured mirror directory
-    (typically Artifacts/). Preserves original files in repo root for the
-    validator which expects root-level paths.
-    """
-    mirror_dir = get_artifact_mirror_dir()
-    if not mirror_dir:
-        return
-
-    os.makedirs(mirror_dir, exist_ok=True)
-    copied = 0
-    for filename in _MIRROR_FILES:
-        if os.path.exists(filename):
-            try:
-                shutil.copy2(filename, os.path.join(mirror_dir, filename))
-                copied += 1
-            except OSError as exc:
-                logger.warning(f"[MIRROR] Failed to copy {filename}: {exc}")
-
-    # Mirror reports directory too (markdown files)
-    if os.path.isdir("reports"):
-        reports_mirror = os.path.join(mirror_dir, "reports")
-        os.makedirs(reports_mirror, exist_ok=True)
-        for report_name in os.listdir("reports"):
-            src = os.path.join("reports", report_name)
-            if os.path.isfile(src):
-                try:
-                    shutil.copy2(src, os.path.join(reports_mirror, report_name))
-                    copied += 1
-                except OSError as exc:
-                    logger.warning(f"[MIRROR] Failed to copy report {report_name}: {exc}")
-
-    logger.info(f"[MIRROR] Mirrored {copied} artifact(s) → {mirror_dir}/")
 
 
 def _build_timeline(
@@ -143,8 +85,7 @@ def _build_timeline(
 ) -> list[dict]:
     """
     Build sentiment timeline from dated content items.
-    Only includes items where published_at is available.
-    Falls back to extracted_at if no published_at is set (pipeline runs always have this).
+    Falls back to extracted_at when published_at is not set.
     Deterministic — no LLM.
     """
     dated_content = {

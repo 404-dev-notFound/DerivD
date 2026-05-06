@@ -38,6 +38,11 @@ from dotenv import load_dotenv
 from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
+from utils.paths import (
+    EXTRACTED_CONTENT, ENTITIES, ENTITY_SENTIMENT, QA_REPORT,
+    COST_REPORT, RUN_METRICS, SENTIMENT_TIMELINE, LLM_CALLS,
+    REPORTS_DIR, SOURCES,
+)
 
 load_dotenv()
 
@@ -127,7 +132,7 @@ def _run_pipeline() -> None:
     pipeline_errors: list[str] = []
 
     try:
-        sources = load_sources("sources.json")
+        sources = load_sources(SOURCES)
 
         _set_state(stage="CONTENT_FETCHED")
         html_map, fetch_errors = fetch_content(sources)
@@ -195,13 +200,13 @@ def _run_pipeline() -> None:
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 ARTIFACT_MAP = {
-    "content":   "extracted_content.json",
-    "entities":  "entities.json",
-    "sentiment": "entity_sentiment.json",
-    "qa":        "qa_report.json",
-    "cost":      "cost_report.json",
-    "metrics":   "run_metrics.json",
-    "timeline":  "sentiment_timeline.json",
+    "content":   EXTRACTED_CONTENT,
+    "entities":  ENTITIES,
+    "sentiment": ENTITY_SENTIMENT,
+    "qa":        QA_REPORT,
+    "cost":      COST_REPORT,
+    "metrics":   RUN_METRICS,
+    "timeline":  SENTIMENT_TIMELINE,
 }
 
 
@@ -262,7 +267,7 @@ def pipeline_status() -> dict:
 @app.get("/pipeline/logs", tags=["pipeline"])
 def pipeline_logs(lines: int = Query(default=100, ge=1, le=2000)) -> PlainTextResponse:
     """Return the last N lines from pipeline.log."""
-    log_path = "pipeline.log"
+    log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pipeline.log")
     if not os.path.exists(log_path):
         raise HTTPException(status_code=404, detail="pipeline.log not yet created (run pipeline first)")
     with open(log_path, encoding="utf-8") as f:
@@ -289,7 +294,7 @@ def get_artifact(artifact_name: str) -> JSONResponse:
 @app.get("/reports", tags=["reports"])
 def list_reports() -> dict:
     """List all generated report files."""
-    reports_dir = Path("reports")
+    reports_dir = Path(REPORTS_DIR)
     if not reports_dir.is_dir():
         return {"reports": [], "message": "reports/ directory not yet created"}
     files = [f.name for f in reports_dir.iterdir() if f.is_file()]
@@ -300,7 +305,7 @@ def list_reports() -> dict:
 def get_report(name: str) -> PlainTextResponse:
     """Fetch a report by filename (e.g. trader_brief.md)."""
     # Path traversal guard: resolve and verify the path stays inside reports/
-    reports_root = Path("reports").resolve()
+    reports_root = Path(REPORTS_DIR).resolve()
     path = (reports_root / name).resolve()
     if not str(path).startswith(str(reports_root)):
         raise HTTPException(status_code=400, detail="Invalid report name")
@@ -325,7 +330,7 @@ def llm_calls(
     Return paginated LLM call log from llm_calls.jsonl.
     Filter by stage name with ?stage=entity_extraction
     """
-    log_path = "llm_calls.jsonl"
+    log_path = LLM_CALLS
     if not os.path.exists(log_path):
         raise HTTPException(status_code=404, detail="llm_calls.jsonl not yet created")
 

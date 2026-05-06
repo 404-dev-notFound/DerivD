@@ -14,9 +14,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.llm_client import llm_call, parse_json_response, validate_spans_against_corpus
 from utils.models import EntitySentiment, SentimentEvidence
 from utils.config import get_max_tokens_for_stage, get_stage_param
+from utils.paths import ENTITIES, EXTRACTED_CONTENT, ENTITY_SENTIMENT
 
 logger = logging.getLogger(__name__)
-OUTPUT_PATH = "entity_sentiment.json"
+OUTPUT_PATH = ENTITY_SENTIMENT
 STAGE = "entity_sentiment_scoring"
 
 SYSTEM_SCORE_SENTIMENT = """You are a financial sentiment analysis engine.
@@ -67,7 +68,7 @@ def score_entity_sentiment(
             stage=STAGE,
             system=SYSTEM_SCORE_SENTIMENT,
             user_content=user_content,
-            input_artifacts=["entities.json", "extracted_content.json"],
+            input_artifacts=[ENTITIES, EXTRACTED_CONTENT],
             output_artifact=OUTPUT_PATH,
             content_ids=list(valid_content_ids),
             max_tokens=get_max_tokens_for_stage(STAGE),

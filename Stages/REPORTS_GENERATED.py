@@ -13,9 +13,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
 from utils.config import get_max_tokens_for_stage
+from utils.paths import ENTITIES, ENTITY_SENTIMENT, QA_REPORT, EXTRACTED_CONTENT, REPORTS_DIR
 
 logger = logging.getLogger(__name__)
-REPORTS_DIR = "reports"
 STAGE = "report_generation"
 
 DISCLAIMER = (
@@ -87,8 +87,8 @@ def generate_reports(
                 system=system_prompt,
                 user_content=full_user,
                 input_artifacts=[
-                    "entities.json", "entity_sentiment.json",
-                    "qa_report.json", "extracted_content.json",
+                    ENTITIES, ENTITY_SENTIMENT,
+                    QA_REPORT, EXTRACTED_CONTENT,
                 ],
                 output_artifact=output_path,
                 max_tokens=get_max_tokens_for_stage(STAGE),

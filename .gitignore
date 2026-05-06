@@ -32,6 +32,8 @@ Thumbs.db
 pipeline.log
 pre-log.json
 post-log.json
+Stages/pre-log.json
+Stages/post-log.json
 
 # ── Build / dist ────────────────────────────────────────────────────────────
 build/
@@ -39,9 +41,20 @@ dist/
 *.tar.gz
 *.zip
 
-# NOTE:
-# Generated pipeline artifacts (extracted_content.json, entities.json,
-# entity_sentiment.json, qa_report.json, cost_report.json, run_metrics.json,
-# sentiment_timeline.json, llm_calls.jsonl, reports/, Artifacts/) are
-# intentionally tracked so reviewers can inspect the latest reference output.
-# They are regenerated on every `python run_pipeline.py` run.
+# ── Generated pipeline artifacts ────────────────────────────────────────────
+# All artifacts live in Artifacts/ and are tracked there.
+# Root-level copies are NOT created by the pipeline (only Artifacts/ is written).
+# These patterns guard against accidental root-level regeneration:
+extracted_content.json
+entities.json
+entity_sentiment.json
+qa_report.json
+cost_report.json
+run_metrics.json
+sentiment_timeline.json
+llm_calls.jsonl
+reports/
+
+# Keep Artifacts/ tracked — evaluators inspect it for reference output.
+# Keep sources.json tracked — it is input, not output.
+!sources.json

@@ -20,10 +20,11 @@ from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.config import get_pricing, load_config
+from utils.paths import COST_REPORT, LLM_CALLS, EXTRACTED_CONTENT, ENTITIES
 
 logger = logging.getLogger(__name__)
-OUTPUT_PATH = "cost_report.json"
-LLM_LOG_PATH = "llm_calls.jsonl"
+OUTPUT_PATH = COST_REPORT
+LLM_LOG_PATH = LLM_CALLS
 
 
 def compute_cost(model: str, input_tokens: int, output_tokens: int) -> float:
@@ -37,10 +38,10 @@ def compute_cost(model: str, input_tokens: int, output_tokens: int) -> float:
 
 def _load_content_index() -> dict[str, str]:
     """Map content_id → source_url from extracted_content.json, if available."""
-    if not os.path.exists("extracted_content.json"):
+    if not os.path.exists(EXTRACTED_CONTENT):
         return {}
     try:
-        with open("extracted_content.json", encoding="utf-8") as f:
+        with open(EXTRACTED_CONTENT, encoding="utf-8") as f:
             content = json.load(f)
         return {c["content_id"]: c.get("source_url", "unknown") for c in content}
     except (OSError, json.JSONDecodeError, KeyError):
@@ -49,10 +50,10 @@ def _load_content_index() -> dict[str, str]:
 
 def _load_entities_count() -> int:
     """Number of resolved entities (for per-entity cost average)."""
-    if not os.path.exists("entities.json"):
+    if not os.path.exists(ENTITIES):
         return 0
     try:
-        with open("entities.json", encoding="utf-8") as f:
+        with open(ENTITIES, encoding="utf-8") as f:
             entities = json.load(f)
         return len(entities) if isinstance(entities, list) else 0
     except (OSError, json.JSONDecodeError):
