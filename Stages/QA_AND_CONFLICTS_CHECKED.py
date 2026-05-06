@@ -15,10 +15,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
 from utils.models import QAIssue
+from utils.config import get_low_confidence_threshold, get_max_tokens_for_stage
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = "qa_report.json"
-LOW_CONFIDENCE_THRESHOLD = 0.6
+STAGE = "qa_and_conflict_detection"
 
 SYSTEM_QA_CONFLICTS = """You are a financial intelligence QA engine. Review extracted content, entities, and sentiment for quality issues and conflicts.
 
@@ -68,13 +69,14 @@ def run_qa_and_conflicts(
 
     try:
         raw_response = llm_call(
-            stage="qa_and_conflict_detection",
+            stage=STAGE,
             system=SYSTEM_QA_CONFLICTS,
             user_content=user_content,
             input_artifacts=[
                 "entities.json", "entity_sentiment.json", "extracted_content.json"
             ],
             output_artifact=OUTPUT_PATH,
+            max_tokens=get_max_tokens_for_stage(STAGE),
         )
         parsed = parse_json_response(raw_response)
         raw_issues = (
@@ -91,10 +93,11 @@ def run_qa_and_conflicts(
 
 
 def _flag_low_confidence(entities: list[dict]) -> list[dict]:
-    """Code-enforced: any entity below threshold gets a QA issue."""
+    """Code-enforced: any entity below config threshold gets a QA issue."""
+    threshold = get_low_confidence_threshold()
     issues = []
     for ent in entities:
-        if ent.get("resolution_confidence", 1.0) < LOW_CONFIDENCE_THRESHOLD:
+        if ent.get("resolution_confidence", 1.0) < threshold:
             issue_id = f"QA_{uuid.uuid4().hex[:6].upper()}"
             issues.append({
                 "issue_id": issue_id,
@@ -107,7 +110,7 @@ def _flag_low_confidence(entities: list[dict]) -> list[dict]:
                 ],
                 "details": (
                     f"Entity '{ent.get('canonical_name')}' has low resolution confidence "
-                    f"({ent.get('resolution_confidence', 0):.2f} < {LOW_CONFIDENCE_THRESHOLD}). "
+                    f"({ent.get('resolution_confidence', 0):.2f} < {threshold}). "
                     "Requires manual review."
                 ),
             })

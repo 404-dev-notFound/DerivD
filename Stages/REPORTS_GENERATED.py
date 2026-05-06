@@ -12,9 +12,11 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
+from utils.config import get_max_tokens_for_stage
 
 logger = logging.getLogger(__name__)
 REPORTS_DIR = "reports"
+STAGE = "report_generation"
 
 DISCLAIMER = (
     "\n\n---\n"
@@ -81,7 +83,7 @@ def generate_reports(
 
         try:
             raw = llm_call(
-                stage="report_generation",
+                stage=STAGE,
                 system=system_prompt,
                 user_content=full_user,
                 input_artifacts=[
@@ -89,6 +91,7 @@ def generate_reports(
                     "qa_report.json", "extracted_content.json",
                 ],
                 output_artifact=output_path,
+                max_tokens=get_max_tokens_for_stage(STAGE),
             )
 
             if not raw or not raw.strip():

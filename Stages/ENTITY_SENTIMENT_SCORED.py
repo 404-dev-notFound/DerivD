@@ -145,6 +145,8 @@ def _build_corpus(content_items: list[dict]) -> str:
 
 
 def _build_user_content(entities: list[dict], content_items: list[dict]) -> str:
+    mentions_cap = int(get_stage_param(STAGE, "mentions_cap_per_entity", 10))
+    content_cap = int(get_stage_param(STAGE, "content_cap_per_mention_chars", 600))
     content_map: dict[str, dict] = {c["content_id"]: c for c in content_items}
     lines = ["Score sentiment for each entity below using ONLY the provided content.\n"]
 
@@ -155,13 +157,13 @@ def _build_user_content(entities: list[dict], content_items: list[dict]) -> str:
         )
         mentions = entity.get("source_mentions", [])
         seen_content: set[str] = set()
-        for mention in mentions[:10]:  # cap per entity to control token usage
+        for mention in mentions[:mentions_cap]:
             cid = mention.get("content_id")
             if cid in seen_content or cid not in content_map:
                 continue
             seen_content.add(cid)
             item = content_map[cid]
-            body = (item.get("title", "") + " " + item.get("body", "")).strip()[:600]
+            body = (item.get("title", "") + " " + item.get("body", "")).strip()[:content_cap]
             lines.append(
                 f"[content_id={cid} source_url={item['source_url']}]\n{body}\n"
             )

@@ -1,0 +1,100 @@
+{
+  "total_llm_calls": 9,
+  "failed_calls": 0,
+  "total_input_tokens": 16641,
+  "total_output_tokens": 15258,
+  "total_cost_usd": 0.236573,
+  "cost_per_entity_usd": 0.013143,
+  "entities_resolved": 18,
+  "by_stage": {
+    "entity_extraction": {
+      "call_count": 2,
+      "input_tokens": 2920,
+      "output_tokens": 2709,
+      "cost_usd": 0.016465,
+      "model": "anthropic/claude-haiku-4.5"
+    },
+    "entity_resolution": {
+      "call_count": 2,
+      "input_tokens": 3103,
+      "output_tokens": 3824,
+      "cost_usd": 0.066669,
+      "model": "anthropic/claude-sonnet-4.5"
+    },
+    "entity_sentiment_scoring": {
+      "call_count": 1,
+      "input_tokens": 2652,
+      "output_tokens": 3382,
+      "cost_usd": 0.058686,
+      "model": "anthropic/claude-sonnet-4.5"
+    },
+    "qa_and_conflict_detection": {
+      "call_count": 1,
+      "input_tokens": 1315,
+      "output_tokens": 666,
+      "cost_usd": 0.004645,
+      "model": "anthropic/claude-haiku-4.5"
+    },
+    "report_generation": {
+      "call_count": 3,
+      "input_tokens": 6651,
+      "output_tokens": 4677,
+      "cost_usd": 0.090108,
+      "model": "anthropic/claude-sonnet-4.5"
+    }
+  },
+  "by_model": {
+    "anthropic/claude-haiku-4.5": {
+      "call_count": 3,
+      "input_tokens": 4235,
+      "output_tokens": 3375,
+      "cost_usd": 0.02111
+    },
+    "anthropic/claude-sonnet-4.5": {
+      "call_count": 6,
+      "input_tokens": 12406,
+      "output_tokens": 11883,
+      "cost_usd": 0.215463
+    }
+  },
+  "by_source": {
+    "https://www.federalreserve.gov/newsevents/pressreleases.htm": 0.018541,
+    "https://finance.yahoo.com/markets/": 0.018541,
+    "https://www.imf.org/en/News": 0.019527,
+    "https://finance.yahoo.com/quote/EURUSD%3DX/": 0.018541,
+    "shared/aggregate": 0.161422
+  },
+  "model_routing": {
+    "entity_extraction": {
+      "model_used": "anthropic/claude-haiku-4.5",
+      "calls": 2,
+      "cost_usd": 0.016465,
+      "tier": "tier_cheap"
+    },
+    "entity_resolution": {
+      "model_used": "anthropic/claude-sonnet-4.5",
+      "calls": 2,
+      "cost_usd": 0.066669,
+      "tier": "tier_standard"
+    },
+    "entity_sentiment_scoring": {
+      "model_used": "anthropic/claude-sonnet-4.5",
+      "calls": 1,
+      "cost_usd": 0.058686,
+      "tier": "tier_standard"
+    },
+    "qa_and_conflict_detection": {
+      "model_used": "anthropic/claude-haiku-4.5",
+      "calls": 1,
+      "cost_usd": 0.004645,
+      "tier": "tier_cheap"
+    },
+    "report_generation": {
+      "model_used": "anthropic/claude-sonnet-4.5",
+      "calls": 3,
+      "cost_usd": 0.090108,
+      "tier": "tier_standard"
+    }
+  },
+  "efficiency_strategy": "Three strategies applied: (1) Tiered model routing — classification-heavy stages (entity_extraction, qa_and_conflict_detection) use Haiku 4.5 while reasoning-heavy stages (entity_resolution, entity_sentiment_scoring, report_generation) use Sonnet 4.5. (2) SHA-256 content hashing in CONTENT_NORMALISED eliminates duplicate content before any LLM sees it. (3) Batching of entity mentions per source (batch_size configurable in config.json) reduces LLM round-trips. Per-stage model selection is defined in config.json under stages.<stage>.model_tier."
+}

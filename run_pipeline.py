@@ -17,6 +17,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ── Logging setup ──────────────────────────────────────────────────────────────
+# Windows legacy consoles default to cp1252 which can't encode arrows / em-dashes
+# used in log messages. Force stdout to UTF-8 so log output never crashes formatting.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+except (AttributeError, ValueError):
+    pass
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -81,7 +88,8 @@ def main() -> None:
     # ── Stage 2: Fetch content ─────────────────────────────────────────────────
     advance("SOURCES_LOADED", "CONTENT_FETCHED")
     html_map, fetch_errors = fetch_content(sources)
-    pipeline_errors.extend(fetch_errors)
+    # Do NOT extend pipeline_errors here — finalise() already merges fetch_errors
+    # with pipeline_errors and dedupes, so duplicate inclusion here used to double-log.
 
     # ── Stage 3: Extract content ───────────────────────────────────────────────
     advance("CONTENT_FETCHED", "CONTENT_EXTRACTED")

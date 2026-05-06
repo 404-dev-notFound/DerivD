@@ -5,26 +5,20 @@
     "entity_type": "currency_pair",
     "aliases": [
       "EUR/USD",
-      "EURUSD"
+      "EURUSD=X"
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_fc229ade",
+        "content_id": "CNT_9bfdf4f2",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "EUR/USD",
         "source_span": "EUR/USD (EURUSD=X)"
       },
       {
-        "content_id": "CNT_fc229ade",
-        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
-        "mention_text": "EURUSD",
-        "source_span": "EUR/USD (EURUSD=X)"
-      },
-      {
-        "content_id": "CNT_e3a1cca8",
+        "content_id": "CNT_9deb3734",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "EUR/USD",
-        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD Downside? Don't Miss These Trading Opportunities"
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD Downside?"
       }
     ],
     "resolution_confidence": 1.0
@@ -34,15 +28,15 @@
     "canonical_name": "GBP",
     "entity_type": "currency",
     "aliases": [
-      "Sterling",
-      "Pound"
+      "Pound",
+      "Sterling"
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_05191cfc",
+        "content_id": "CNT_769f5ec2",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Pound",
-        "source_span": "Sterling Today: Pound jumps as dollar sells off on Iran-Hormuz deal hopes"
+        "source_span": "Sterling Today: Pound jumps as dollar sells off"
       }
     ],
     "resolution_confidence": 0.95
@@ -52,39 +46,63 @@
     "canonical_name": "USD",
     "entity_type": "currency",
     "aliases": [
-      "Dollar",
-      "dollar"
+      "dollar",
+      "Dollar"
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_05191cfc",
+        "content_id": "CNT_769f5ec2",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "dollar",
-        "source_span": "Sterling Today: Pound jumps as dollar sells off on Iran-Hormuz deal hopes"
+        "source_span": "Sterling Today: Pound jumps as dollar sells off"
       },
       {
-        "content_id": "CNT_8277b57a",
+        "content_id": "CNT_4a34a1ca",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Dollar",
-        "source_span": "Losses by the Dollar as Focus on Diplomacy Continues"
+        "source_span": "Losses by the Dollar as Focus on Diplomacy"
       },
       {
-        "content_id": "CNT_954f1587",
+        "content_id": "CNT_08dd12fd",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Dollar",
-        "source_span": "Dollar Tumbles and Gold Surges on US-Iran Ceasefire"
+        "source_span": "Dollar Tumbles and Gold Surges on US-Iran"
       },
       {
-        "content_id": "CNT_01691da3",
+        "content_id": "CNT_a19d8f0b",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Dollar",
-        "source_span": "Why a Plunging Dollar Is Missing Out on the Relief Rally"
+        "source_span": "Why a Plunging Dollar Is Missing Out on"
       }
     ],
-    "resolution_confidence": 0.95
+    "resolution_confidence": 0.98
   },
   {
     "entity_id": "ENT_004",
+    "canonical_name": "Crude Oil",
+    "entity_type": "commodity",
+    "aliases": [
+      "oil prices",
+      "Oil"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_9deb3734",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Oil",
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD"
+      },
+      {
+        "content_id": "CNT_68e5174c",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "oil prices",
+        "source_span": "Eurozone inflation hits 3% as oil prices spike"
+      }
+    ],
+    "resolution_confidence": 0.92
+  },
+  {
+    "entity_id": "ENT_005",
     "canonical_name": "Federal Reserve",
     "entity_type": "central_bank",
     "aliases": [
@@ -92,67 +110,33 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_e3a1cca8",
+        "content_id": "CNT_9deb3734",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Fed",
-        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD Downside? Don't Miss These Trading Opportunities"
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_005",
-    "canonical_name": "Eurozone Inflation",
-    "entity_type": "economic_indicator",
-    "aliases": [
-      "Eurozone inflation"
-    ],
-    "source_mentions": [
-      {
-        "content_id": "CNT_bcb63c3f",
-        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
-        "mention_text": "Eurozone inflation",
-        "source_span": "Eurozone inflation hits 3% as oil prices spike and economic growth slows"
-      }
-    ],
-    "resolution_confidence": 0.9
-  },
-  {
     "entity_id": "ENT_006",
-    "canonical_name": "Crude Oil",
-    "entity_type": "commodity",
+    "canonical_name": "Eurozone",
+    "entity_type": "country",
     "aliases": [
-      "oil prices"
+      "Eurozone"
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_bcb63c3f",
+        "content_id": "CNT_68e5174c",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
-        "mention_text": "oil prices",
-        "source_span": "Eurozone inflation hits 3% as oil prices spike and economic growth slows"
+        "mention_text": "Eurozone",
+        "source_span": "Eurozone inflation hits 3% as oil prices"
       }
     ],
-    "resolution_confidence": 0.85
+    "resolution_confidence": 1.0
   },
   {
     "entity_id": "ENT_007",
-    "canonical_name": "GDP Growth",
-    "entity_type": "economic_indicator",
-    "aliases": [
-      "economic growth"
-    ],
-    "source_mentions": [
-      {
-        "content_id": "CNT_bcb63c3f",
-        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
-        "mention_text": "economic growth",
-        "source_span": "Eurozone inflation hits 3% as oil prices spike and economic growth slows"
-      }
-    ],
-    "resolution_confidence": 0.8
-  },
-  {
-    "entity_id": "ENT_008",
     "canonical_name": "European Central Bank",
     "entity_type": "central_bank",
     "aliases": [
@@ -160,16 +144,16 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_422aec38",
+        "content_id": "CNT_2be2094d",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "ECB",
-        "source_span": "ECB, Bank of England Set to Hold Rates Unchanged Today"
+        "source_span": "ECB, Bank of England Set to Hold Rates"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_009",
+    "entity_id": "ENT_008",
     "canonical_name": "Bank of England",
     "entity_type": "central_bank",
     "aliases": [
@@ -177,16 +161,16 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_422aec38",
+        "content_id": "CNT_2be2094d",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Bank of England",
-        "source_span": "ECB, Bank of England Set to Hold Rates Unchanged Today"
+        "source_span": "ECB, Bank of England Set to Hold Rates"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_010",
+    "entity_id": "ENT_009",
     "canonical_name": "Eni S.p.A.",
     "entity_type": "company",
     "aliases": [
@@ -194,16 +178,16 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_ee26189b",
+        "content_id": "CNT_d09d231e",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Eni",
         "source_span": "Eni Raises Share Buyback Plan to $3.3B"
       }
     ],
-    "resolution_confidence": 0.9
+    "resolution_confidence": 0.95
   },
   {
-    "entity_id": "ENT_011",
+    "entity_id": "ENT_010",
     "canonical_name": "EUR",
     "entity_type": "currency",
     "aliases": [
@@ -211,16 +195,16 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_7ce85b96",
+        "content_id": "CNT_e8ce56a8",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Euro",
-        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro Could Still Be Worth a Buy"
+        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_012",
+    "entity_id": "ENT_011",
     "canonical_name": "Europe",
     "entity_type": "country",
     "aliases": [
@@ -228,16 +212,16 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_7ce85b96",
+        "content_id": "CNT_e8ce56a8",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Europe",
-        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro Could Still Be Worth a Buy"
+        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_013",
+    "entity_id": "ENT_012",
     "canonical_name": "Gold",
     "entity_type": "commodity",
     "aliases": [
@@ -245,136 +229,64 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_954f1587",
+        "content_id": "CNT_08dd12fd",
         "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
         "mention_text": "Gold",
-        "source_span": "Dollar Tumbles and Gold Surges on US-Iran Ceasefire"
+        "source_span": "Dollar Tumbles and Gold Surges on US-Iran"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_013",
+    "canonical_name": "International Monetary Fund",
+    "entity_type": "central_bank",
+    "aliases": [
+      "IMF",
+      "International Monetary Fund"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_eae331de",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund"
+      },
+      {
+        "content_id": "CNT_91bfb8cf",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund"
+      },
+      {
+        "content_id": "CNT_8d4ab1bb",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "IMF",
+        "source_span": "IMF Statement on the Middle East"
+      },
+      {
+        "content_id": "CNT_99252e90",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "The Heads of the International Energy Agency, International Monetary Fund"
+      },
+      {
+        "content_id": "CNT_102b5c6c",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "The Heads of the International Monetary Fund (IMF), the"
+      },
+      {
+        "content_id": "CNT_3ec91bcc",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "@ International Monetary Fund. All rights reserved."
       }
     ],
     "resolution_confidence": 1.0
   },
   {
     "entity_id": "ENT_014",
-    "canonical_name": "International Energy Agency",
-    "entity_type": "other",
-    "aliases": [
-      "IEA",
-      "International Energy Agency"
-    ],
-    "source_mentions": [
-      {
-        "content_id": "CNT_05746d05",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "International Energy Agency",
-        "source_span": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group"
-      },
-      {
-        "content_id": "CNT_5136fe19",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "International Energy Agency",
-        "source_span": "The Heads of the International Energy Agency, International Monetary Fund, and World Bank Group met today as part of"
-      }
-    ],
-    "resolution_confidence": 1.0
-  },
-  {
-    "entity_id": "ENT_015",
-    "canonical_name": "International Monetary Fund",
-    "entity_type": "other",
-    "aliases": [
-      "International Monetary Fund",
-      "IMF"
-    ],
-    "source_mentions": [
-      {
-        "content_id": "CNT_05746d05",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "International Monetary Fund",
-        "source_span": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group"
-      },
-      {
-        "content_id": "CNT_a3643dcf",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "International Monetary Fund",
-        "source_span": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme"
-      },
-      {
-        "content_id": "CNT_5136fe19",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "International Monetary Fund",
-        "source_span": "The Heads of the International Energy Agency, International Monetary Fund, and World Bank Group met today as part of"
-      },
-      {
-        "content_id": "CNT_3f5b655c",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "International Monetary Fund",
-        "source_span": "The Heads of the International Monetary Fund (IMF), the World Bank Group (WBG) and the World Food Programme (WFP) met to discuss"
-      }
-    ],
-    "resolution_confidence": 1.0
-  },
-  {
-    "entity_id": "ENT_016",
-    "canonical_name": "World Bank Group",
-    "entity_type": "other",
-    "aliases": [
-      "WBG",
-      "World Bank Group"
-    ],
-    "source_mentions": [
-      {
-        "content_id": "CNT_05746d05",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "World Bank Group",
-        "source_span": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group"
-      },
-      {
-        "content_id": "CNT_a3643dcf",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "World Bank Group",
-        "source_span": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme"
-      },
-      {
-        "content_id": "CNT_5136fe19",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "World Bank Group",
-        "source_span": "The Heads of the International Energy Agency, International Monetary Fund, and World Bank Group met today as part of"
-      },
-      {
-        "content_id": "CNT_3f5b655c",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "World Bank Group",
-        "source_span": "The Heads of the International Monetary Fund (IMF), the World Bank Group (WBG) and the World Food Programme (WFP) met to discuss"
-      }
-    ],
-    "resolution_confidence": 1.0
-  },
-  {
-    "entity_id": "ENT_018",
-    "canonical_name": "World Food Programme",
-    "entity_type": "other",
-    "aliases": [
-      "WFP",
-      "World Food Programme"
-    ],
-    "source_mentions": [
-      {
-        "content_id": "CNT_a3643dcf",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "World Food Programme",
-        "source_span": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme"
-      },
-      {
-        "content_id": "CNT_3f5b655c",
-        "source_url": "https://www.imf.org/en/News",
-        "mention_text": "World Food Programme",
-        "source_span": "The Heads of the International Monetary Fund (IMF), the World Bank Group (WBG) and the World Food Programme (WFP) met to discuss"
-      }
-    ],
-    "resolution_confidence": 1.0
-  },
-  {
-    "entity_id": "ENT_019",
     "canonical_name": "Kristalina Georgieva",
     "entity_type": "person",
     "aliases": [
@@ -382,67 +294,59 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_5bddc811",
+        "content_id": "CNT_fdbae463",
         "source_url": "https://www.imf.org/en/News",
         "mention_text": "Kristalina Georgieva",
-        "source_span": "Ahead of the 2026 Annual Meetings Kristalina Georgieva delivers a Curtain Raiser speech on the outlook"
+        "source_span": "Ahead of the 2026 Annual Meetings Kristalina Georgieva delivers"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_021",
-    "canonical_name": "Energy Prices",
-    "entity_type": "commodity",
+    "entity_id": "ENT_015",
+    "canonical_name": "International Energy Agency",
+    "entity_type": "central_bank",
     "aliases": [
-      "energy prices"
+      "IEA",
+      "International Energy Agency"
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_07d33766",
+        "content_id": "CNT_99252e90",
         "source_url": "https://www.imf.org/en/News",
-        "mention_text": "energy prices",
-        "source_span": "So far, we have observed disruptions to trade and economic activity, surges in energy prices, and volatility in financial markets."
+        "mention_text": "International Energy Agency",
+        "source_span": "The Heads of the International Energy Agency, International Monetary Fund"
       }
     ],
-    "resolution_confidence": 0.9
+    "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_022",
-    "canonical_name": "Productivity Growth",
-    "entity_type": "economic_indicator",
+    "entity_id": "ENT_017",
+    "canonical_name": "World Bank Group",
+    "entity_type": "central_bank",
     "aliases": [
-      "productivity growth"
+      "WBG",
+      "World Bank",
+      "World Bank Group"
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_637c73d2",
+        "content_id": "CNT_99252e90",
         "source_url": "https://www.imf.org/en/News",
-        "mention_text": "productivity growth",
-        "source_span": "Strengthening innovation could help boost productivity growth by 40 percent, equal to adding the output of the"
-      }
-    ],
-    "resolution_confidence": 0.95
-  },
-  {
-    "entity_id": "ENT_023",
-    "canonical_name": "Output",
-    "entity_type": "economic_indicator",
-    "aliases": [
-      "output"
-    ],
-    "source_mentions": [
+        "mention_text": "World Bank Group",
+        "source_span": "International Monetary Fund, and World Bank Group met today"
+      },
       {
-        "content_id": "CNT_cfd85d9e",
+        "content_id": "CNT_102b5c6c",
         "source_url": "https://www.imf.org/en/News",
-        "mention_text": "output",
-        "source_span": "Knocking down internal trade barriers could boost output in Canada by 7 perc"
+        "mention_text": "World Bank Group",
+        "source_span": "International Monetary Fund (IMF), the World Bank Group (WBG)"
       }
     ],
-    "resolution_confidence": 0.85
+    "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_024",
+    "entity_id": "ENT_018",
     "canonical_name": "Canada",
     "entity_type": "country",
     "aliases": [
@@ -450,16 +354,16 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_cfd85d9e",
+        "content_id": "CNT_9907912a",
         "source_url": "https://www.imf.org/en/News",
         "mention_text": "Canada",
-        "source_span": "Knocking down internal trade barriers could boost output in Canada by 7 perc"
+        "source_span": "Knocking down internal trade barriers could boost output in Canada"
       }
     ],
     "resolution_confidence": 1.0
   },
   {
-    "entity_id": "ENT_025",
+    "entity_id": "ENT_019",
     "canonical_name": "Saudi Arabia",
     "entity_type": "country",
     "aliases": [
@@ -467,10 +371,10 @@
     ],
     "source_mentions": [
       {
-        "content_id": "CNT_38fe7a3d",
+        "content_id": "CNT_e30190a3",
         "source_url": "https://www.imf.org/en/News",
         "mention_text": "Saudi Arabia",
-        "source_span": "Prudent fiscal policy, vigilant financial oversight, and deeper labor and investment reforms can keep Saudi Arabia's transformation on track"
+        "source_span": "investment reforms can keep Saudi Arabia's transformation on track"
       }
     ],
     "resolution_confidence": 1.0

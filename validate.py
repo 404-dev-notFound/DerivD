@@ -11,6 +11,12 @@ import json
 import os
 import sys
 
+# Windows legacy consoles can't print non-ASCII by default; force UTF-8.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+except (AttributeError, ValueError):
+    pass
+
 errors: list[str] = []
 warnings: list[str] = []
 

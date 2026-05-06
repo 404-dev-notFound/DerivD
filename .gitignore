@@ -1,5 +1,47 @@
-/.claude
-/.env
-/.venv
-*.svg
+# ── Secrets & local environment ─────────────────────────────────────────────
+.env
+.env.local
+*.pem
+*.key
+
+# ── Virtualenvs / Python caches ─────────────────────────────────────────────
+.venv/
+venv/
+env/
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── IDE / editor / tooling ──────────────────────────────────────────────────
+.claude/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ── Logs & transient debug files ────────────────────────────────────────────
+pipeline.log
+pre-log.json
+post-log.json
+
+# ── Build / dist ────────────────────────────────────────────────────────────
+build/
+dist/
+*.tar.gz
+*.zip
+
+# NOTE:
+# Generated pipeline artifacts (extracted_content.json, entities.json,
+# entity_sentiment.json, qa_report.json, cost_report.json, run_metrics.json,
+# sentiment_timeline.json, llm_calls.jsonl, reports/, Artifacts/) are
+# intentionally tracked so reviewers can inspect the latest reference output.
+# They are regenerated on every `python run_pipeline.py` run.

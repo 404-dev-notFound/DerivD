@@ -1,0 +1,382 @@
+[
+  {
+    "entity_id": "ENT_001",
+    "canonical_name": "EUR/USD",
+    "entity_type": "currency_pair",
+    "aliases": [
+      "EUR/USD",
+      "EURUSD=X"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_9bfdf4f2",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "EUR/USD",
+        "source_span": "EUR/USD (EURUSD=X)"
+      },
+      {
+        "content_id": "CNT_9deb3734",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "EUR/USD",
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD Downside?"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_002",
+    "canonical_name": "GBP",
+    "entity_type": "currency",
+    "aliases": [
+      "Pound",
+      "Sterling"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_769f5ec2",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Pound",
+        "source_span": "Sterling Today: Pound jumps as dollar sells off"
+      }
+    ],
+    "resolution_confidence": 0.95
+  },
+  {
+    "entity_id": "ENT_003",
+    "canonical_name": "USD",
+    "entity_type": "currency",
+    "aliases": [
+      "dollar",
+      "Dollar"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_769f5ec2",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "dollar",
+        "source_span": "Sterling Today: Pound jumps as dollar sells off"
+      },
+      {
+        "content_id": "CNT_4a34a1ca",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Dollar",
+        "source_span": "Losses by the Dollar as Focus on Diplomacy"
+      },
+      {
+        "content_id": "CNT_08dd12fd",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Dollar",
+        "source_span": "Dollar Tumbles and Gold Surges on US-Iran"
+      },
+      {
+        "content_id": "CNT_a19d8f0b",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Dollar",
+        "source_span": "Why a Plunging Dollar Is Missing Out on"
+      }
+    ],
+    "resolution_confidence": 0.98
+  },
+  {
+    "entity_id": "ENT_004",
+    "canonical_name": "Crude Oil",
+    "entity_type": "commodity",
+    "aliases": [
+      "oil prices",
+      "Oil"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_9deb3734",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Oil",
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD"
+      },
+      {
+        "content_id": "CNT_68e5174c",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "oil prices",
+        "source_span": "Eurozone inflation hits 3% as oil prices spike"
+      }
+    ],
+    "resolution_confidence": 0.92
+  },
+  {
+    "entity_id": "ENT_005",
+    "canonical_name": "Federal Reserve",
+    "entity_type": "central_bank",
+    "aliases": [
+      "Fed"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_9deb3734",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Fed",
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_006",
+    "canonical_name": "Eurozone",
+    "entity_type": "country",
+    "aliases": [
+      "Eurozone"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_68e5174c",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Eurozone",
+        "source_span": "Eurozone inflation hits 3% as oil prices"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_007",
+    "canonical_name": "European Central Bank",
+    "entity_type": "central_bank",
+    "aliases": [
+      "ECB"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_2be2094d",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "ECB",
+        "source_span": "ECB, Bank of England Set to Hold Rates"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_008",
+    "canonical_name": "Bank of England",
+    "entity_type": "central_bank",
+    "aliases": [
+      "Bank of England"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_2be2094d",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Bank of England",
+        "source_span": "ECB, Bank of England Set to Hold Rates"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_009",
+    "canonical_name": "Eni S.p.A.",
+    "entity_type": "company",
+    "aliases": [
+      "Eni"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_d09d231e",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Eni",
+        "source_span": "Eni Raises Share Buyback Plan to $3.3B"
+      }
+    ],
+    "resolution_confidence": 0.95
+  },
+  {
+    "entity_id": "ENT_010",
+    "canonical_name": "EUR",
+    "entity_type": "currency",
+    "aliases": [
+      "Euro"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_e8ce56a8",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Euro",
+        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_011",
+    "canonical_name": "Europe",
+    "entity_type": "country",
+    "aliases": [
+      "Europe"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_e8ce56a8",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Europe",
+        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_012",
+    "canonical_name": "Gold",
+    "entity_type": "commodity",
+    "aliases": [
+      "Gold"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_08dd12fd",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "mention_text": "Gold",
+        "source_span": "Dollar Tumbles and Gold Surges on US-Iran"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_013",
+    "canonical_name": "International Monetary Fund",
+    "entity_type": "central_bank",
+    "aliases": [
+      "IMF",
+      "International Monetary Fund"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_eae331de",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund"
+      },
+      {
+        "content_id": "CNT_91bfb8cf",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund"
+      },
+      {
+        "content_id": "CNT_8d4ab1bb",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "IMF",
+        "source_span": "IMF Statement on the Middle East"
+      },
+      {
+        "content_id": "CNT_99252e90",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "The Heads of the International Energy Agency, International Monetary Fund"
+      },
+      {
+        "content_id": "CNT_102b5c6c",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "The Heads of the International Monetary Fund (IMF), the"
+      },
+      {
+        "content_id": "CNT_3ec91bcc",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Monetary Fund",
+        "source_span": "@ International Monetary Fund. All rights reserved."
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_014",
+    "canonical_name": "Kristalina Georgieva",
+    "entity_type": "person",
+    "aliases": [
+      "Kristalina Georgieva"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_fdbae463",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "Kristalina Georgieva",
+        "source_span": "Ahead of the 2026 Annual Meetings Kristalina Georgieva delivers"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_015",
+    "canonical_name": "International Energy Agency",
+    "entity_type": "central_bank",
+    "aliases": [
+      "IEA",
+      "International Energy Agency"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_99252e90",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "International Energy Agency",
+        "source_span": "The Heads of the International Energy Agency, International Monetary Fund"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_017",
+    "canonical_name": "World Bank Group",
+    "entity_type": "central_bank",
+    "aliases": [
+      "WBG",
+      "World Bank",
+      "World Bank Group"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_99252e90",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "World Bank Group",
+        "source_span": "International Monetary Fund, and World Bank Group met today"
+      },
+      {
+        "content_id": "CNT_102b5c6c",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "World Bank Group",
+        "source_span": "International Monetary Fund (IMF), the World Bank Group (WBG)"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_018",
+    "canonical_name": "Canada",
+    "entity_type": "country",
+    "aliases": [
+      "Canada"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_9907912a",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "Canada",
+        "source_span": "Knocking down internal trade barriers could boost output in Canada"
+      }
+    ],
+    "resolution_confidence": 1.0
+  },
+  {
+    "entity_id": "ENT_019",
+    "canonical_name": "Saudi Arabia",
+    "entity_type": "country",
+    "aliases": [
+      "Saudi Arabia"
+    ],
+    "source_mentions": [
+      {
+        "content_id": "CNT_e30190a3",
+        "source_url": "https://www.imf.org/en/News",
+        "mention_text": "Saudi Arabia",
+        "source_span": "investment reforms can keep Saudi Arabia's transformation on track"
+      }
+    ],
+    "resolution_confidence": 1.0
+  }
+]

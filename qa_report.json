@@ -5,84 +5,52 @@
     "issue_type": "conflicting_sentiment",
     "entities": [
       "ENT_001",
-      "ENT_011"
+      "ENT_010"
     ],
     "source_content_ids": [],
-    "details": "EUR/USD (ENT_001) is rated bearish (score=-0.60, conf=0.70) while EUR (ENT_011) is rated mixed (score=0.20, conf=0.60). These represent the same or closely related currency entities but have divergent sentiment assessments. This may indicate inconsistent analysis or different timeframes not clearly distinguished."
+    "details": "EUR/USD (ENT_001) rated bearish (score=-0.60) while EUR (ENT_010) rated mixed (score=0.10). These entities represent related currency pairs and should have more aligned sentiment directionality. Conflict suggests potential data inconsistency in source analysis or entity disambiguation."
   },
   {
     "issue_id": "QA_002",
     "severity": "info",
     "issue_type": "ungrounded_claim",
     "entities": [
-      "ENT_001",
-      "ENT_002",
-      "ENT_003",
-      "ENT_004",
-      "ENT_005",
-      "ENT_006",
-      "ENT_007",
-      "ENT_008",
-      "ENT_009",
-      "ENT_010",
-      "ENT_011",
-      "ENT_012",
-      "ENT_013",
-      "ENT_014",
-      "ENT_015",
-      "ENT_016",
-      "ENT_018",
-      "ENT_019",
-      "ENT_021"
+      "ENT_005"
     ],
     "source_content_ids": [],
-    "details": "All 19 entity sentiments have evidence_count=1 or evidence_count=2, but no source_span citations or content_ids are provided linking these sentiments to specific extracted content. Without traceable source attribution, sentiment claims cannot be verified against original sources."
+    "details": "Federal Reserve (ENT_005) has neutral sentiment (score=0.20) with only 1 evidence count and low confidence (0.50). Insufficient grounding to support sentiment claim. No source_span citations provided for validation."
   },
   {
     "issue_id": "QA_003",
-    "severity": "warning",
-    "issue_type": "other",
+    "severity": "info",
+    "issue_type": "ungrounded_claim",
     "entities": [
-      "ENT_014",
-      "ENT_015",
-      "ENT_016",
-      "ENT_018"
+      "ENT_014"
     ],
     "source_content_ids": [],
-    "details": "International organizations (IEA, IMF, World Bank, WFP) all show neutral sentiment with very low confidence (0.35-0.40) and evidence_count=1-2. These entities typically do not have tradeable sentiment in financial markets, suggesting potential entity misclassification or inappropriate sentiment analysis application to institutional sources."
+    "details": "Kristalina Georgieva (ENT_014) has neutral sentiment with very low confidence (0.30) and only 1 evidence count. Insufficient data to support sentiment assertion. No source_span provided."
   },
   {
     "issue_id": "QA_004",
-    "severity": "info",
+    "severity": "warning",
     "issue_type": "other",
     "entities": [
-      "ENT_001",
-      "ENT_005",
-      "ENT_007"
+      "ENT_006",
+      "ENT_011"
     ],
     "source_content_ids": [],
-    "details": "ENT_001 (EUR/USD), ENT_005 (Eurozone Inflation), and ENT_007 (GDP Growth) all show bearish sentiment with confidence levels 0.70-0.75, but only 1 evidence_count each. Given these are major macro indicators, the low evidence count suggests potentially insufficient source coverage for reliable sentiment assessment."
+    "details": "Both Eurozone (ENT_006) and Europe (ENT_011) are rated bearish with similar scores (-0.60 and -0.50 respectively). Overlapping geographical entities with highly correlated sentiment may indicate data duplication or lack of differentiation in source analysis."
   },
   {
     "issue_id": "QA_005",
     "severity": "info",
-    "issue_type": "other",
+    "issue_type": "ungrounded_claim",
     "entities": [
-      "ENT_022",
-      "ENT_023"
+      "ENT_013",
+      "ENT_015",
+      "ENT_017"
     ],
     "source_content_ids": [],
-    "details": "ENT_022 (Productivity Growth) and ENT_023 (Output) are identified entities with high confidence (0.95, 0.85) but have no corresponding sentiment analysis. This inconsistency suggests incomplete processing or missing data linkage between entity extraction and sentiment analysis stages."
-  },
-  {
-    "issue_id": "QA_006",
-    "severity": "info",
-    "issue_type": "other",
-    "entities": [
-      "ENT_024",
-      "ENT_025"
-    ],
-    "source_content_ids": [],
-    "details": "ENT_024 (Canada) and ENT_025 (Saudi Arabia) are extracted as high-confidence entities (1.00) but have no sentiment analysis. Given these are sovereign nations that may impact commodity prices and FX markets, missing sentiment data represents potential analytical gaps."
+    "details": "Three international institutions (IMF, IEA, World Bank Group) all have neutral sentiment with low confidence scores (0.40) and only 1 evidence count each. Insufficient grounding for sentiment claims. No source_span evidence provided for any of these entities."
   }
 ]
