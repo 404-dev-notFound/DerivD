@@ -26,6 +26,12 @@ from typing import Optional
 import httpx
 from dotenv import load_dotenv
 
+from utils.config import (
+    get_max_tokens_for_stage,
+    get_model_for_stage,
+    get_span_overlap_threshold,
+)
+
 load_dotenv()
 
 logger = logging.getLogger(__name__)
@@ -100,8 +106,11 @@ def llm_call(
     be overridden per-call for stages that produce large JSON responses.
     """
     api_key = os.environ["OPENROUTER_API_KEY"]
-    model = os.environ.get("LLM_MODEL", "anthropic/claude-sonnet-4-5")
-    effective_max_tokens = max_tokens or int(os.environ.get("MAX_TOKENS", 4096))
+    # Tiered routing: config.json maps each stage to a model tier (Haiku/Sonnet/Opus)
+    # to minimise cost on classification-heavy stages while keeping reasoning quality
+    # where it matters. Env var LLM_MODEL_<STAGE> overrides config for targeted ops.
+    model = get_model_for_stage(stage)
+    effective_max_tokens = max_tokens or get_max_tokens_for_stage(stage)
 
     # Inject hallucination rules (from hallucination.md) into every system prompt
     effective_system = _inject_rules(system)
@@ -284,12 +293,14 @@ def _extract_objects_from_array(text: str) -> list | None:
 def validate_spans_against_corpus(evidence_list: list[dict], corpus: str) -> list[dict]:
     """
     Code-enforced hallucination guard: verify evidence spans exist in source corpus.
-    Uses 50% word-overlap threshold. Rejects spans that can't be verified.
+    Uses config.defaults.span_overlap_threshold (default 0.5) word-overlap threshold.
+    Rejects spans that can't be verified.
     Logs every rejection with [HALLUCINATION GUARD] prefix for auditability.
     """
     if not corpus:
         return evidence_list
 
+    threshold = get_span_overlap_threshold()
     corpus_lower = corpus.lower()
     validated = []
 
@@ -307,7 +318,7 @@ def validate_spans_against_corpus(evidence_list: list[dict], corpus: str) -> lis
         matches = sum(1 for w in words if w in corpus_lower)
         overlap = matches / len(words)
 
-        if overlap >= 0.5:
+        if overlap >= threshold:
             validated.append(ev)
         else:
             logger.warning(

@@ -16,11 +16,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
 from utils.models import Entity, SourceMention
+from utils.config import get_stage_param, get_max_tokens_for_stage
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = "entities.json"
-CHUNK_SIZE = 20       # max mentions per LLM call to stay within token budget
-MAX_TOKENS = 8192     # entity resolution produces large JSON; needs headroom
+STAGE = "entity_resolution"
 
 SYSTEM_RESOLVE_ENTITIES = """You are a financial entity resolution engine. Group raw entity mentions into canonical entities, resolving all aliases.
 
@@ -53,14 +53,15 @@ def resolve_entities(raw_mentions: list[dict]) -> list[dict]:
         _write([], 0)
         return []
 
+    chunk_size = int(get_stage_param(STAGE, "chunk_size", 20))
     valid_content_ids = {m.get("content_id") for m in raw_mentions}
     chunks = [
-        raw_mentions[i : i + CHUNK_SIZE]
-        for i in range(0, len(raw_mentions), CHUNK_SIZE)
+        raw_mentions[i : i + chunk_size]
+        for i in range(0, len(raw_mentions), chunk_size)
     ]
     logger.info(
         f"[ENTITIES_RESOLVED] {len(raw_mentions)} mentions → "
-        f"{len(chunks)} chunk(s) of ≤{CHUNK_SIZE}"
+        f"{len(chunks)} chunk(s) of ≤{chunk_size}"
     )
 
     all_raw_entities: list[dict] = []
@@ -84,12 +85,12 @@ def _resolve_chunk(chunk: list[dict], chunk_idx: int) -> list[dict]:
     user_content = json.dumps({"mentions": chunk}, ensure_ascii=False)
     try:
         raw_response = llm_call(
-            stage="entity_resolution",
+            stage=STAGE,
             system=SYSTEM_RESOLVE_ENTITIES,
             user_content=user_content,
             input_artifacts=["extracted_content.json"],
             output_artifact=OUTPUT_PATH,
-            max_tokens=MAX_TOKENS,
+            max_tokens=get_max_tokens_for_stage(STAGE),
         )
         parsed = parse_json_response(raw_response)
         entities = parsed.get("entities", []) if isinstance(parsed, dict) else []

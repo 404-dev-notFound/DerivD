@@ -1,0 +1,63 @@
+{
+  "description": "Pipeline configuration — tiered model routing and per-stage parameters. Loaded by utils/config.py at runtime.",
+  "models": {
+    "tier_cheap": "anthropic/claude-haiku-4.5",
+    "tier_standard": "anthropic/claude-sonnet-4.5",
+    "tier_premium": "anthropic/claude-opus-4.5"
+  },
+  "stages": {
+    "entity_extraction": {
+      "model_tier": "tier_cheap",
+      "max_tokens": 4096,
+      "batch_size": 35,
+      "per_item_char_cap": 1000,
+      "rationale": "Pure classification + span extraction. No complex reasoning required; Haiku 4.5 is sufficient and ~12x cheaper."
+    },
+    "entity_resolution": {
+      "model_tier": "tier_standard",
+      "max_tokens": 8192,
+      "chunk_size": 20,
+      "rationale": "Requires financial-domain knowledge for alias grouping and canonical selection. Sonnet 4.5 balances cost and reasoning quality."
+    },
+    "entity_sentiment_scoring": {
+      "model_tier": "tier_standard",
+      "max_tokens": 8192,
+      "mentions_cap_per_entity": 10,
+      "content_cap_per_mention_chars": 600,
+      "rationale": "Per-entity sentiment requires nuanced language understanding + evidence citation. Sonnet 4.5 is the right balance."
+    },
+    "qa_and_conflict_detection": {
+      "model_tier": "tier_cheap",
+      "max_tokens": 4096,
+      "rationale": "Rule-like contradiction detection over structured summaries. Haiku 4.5 handles this cleanly."
+    },
+    "report_generation": {
+      "model_tier": "tier_standard",
+      "max_tokens": 4096,
+      "rationale": "Multi-audience narrative synthesis. Sonnet 4.5 produces clean grounded prose; Haiku tends to over-abbreviate."
+    }
+  },
+  "defaults": {
+    "model_tier": "tier_standard",
+    "max_tokens": 4096,
+    "low_confidence_threshold": 0.6,
+    "span_overlap_threshold": 0.5,
+    "fetch_timeout_seconds": 20,
+    "http_retries": 2
+  },
+  "efficiency": {
+    "enable_content_hashing": true,
+    "enable_batching": true,
+    "enable_tiered_routing": true,
+    "enable_artifact_mirror": true,
+    "artifact_mirror_dir": "Artifacts"
+  },
+  "pricing_usd_per_million": {
+    "anthropic/claude-haiku-4.5": {"input": 1.00, "output": 5.00},
+    "anthropic/claude-sonnet-4.5": {"input": 3.00, "output": 15.00},
+    "anthropic/claude-opus-4.5": {"input": 15.00, "output": 75.00},
+    "claude-haiku-4.5": {"input": 1.00, "output": 5.00},
+    "claude-sonnet-4.5": {"input": 3.00, "output": 15.00},
+    "claude-opus-4.5": {"input": 15.00, "output": 75.00}
+  }
+}

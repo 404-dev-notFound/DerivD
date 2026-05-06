@@ -13,8 +13,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
 from utils.content_utils import sanitise_text
+from utils.config import get_stage_param
 
 logger = logging.getLogger(__name__)
+
+STAGE = "entity_extraction"
 
 SYSTEM_EXTRACT_ENTITIES = """You are a financial entity extraction engine. Extract all financial entities from the provided content.
 
@@ -37,32 +40,33 @@ STRICT ANTI-HALLUCINATION RULES:
 Output valid JSON only. No markdown fences.
 Schema: {"entities": [{"mention_text":"string","entity_type":"string","content_id":"string","source_url":"string","source_span":"string"}]}"""
 
-BATCH_SIZE = 35
-
-
 def extract_entities(content_items: list[dict]) -> list[dict]:
     """
     Batch content → LLM entity mention extraction.
     Returns flat list of raw entity mention dicts.
     Failures produce empty batch (code-enforced fallback, not model-enforced).
     """
+    batch_size = int(get_stage_param(STAGE, "batch_size", 35))
+    char_cap = int(get_stage_param(STAGE, "per_item_char_cap", 1000))
+
     all_mentions: list[dict] = []
     batches = [
-        content_items[i:i + BATCH_SIZE]
-        for i in range(0, len(content_items), BATCH_SIZE)
+        content_items[i:i + batch_size]
+        for i in range(0, len(content_items), batch_size)
     ]
     logger.info(
-        f"[ENTITIES_EXTRACTED] {len(content_items)} items → {len(batches)} batch(es)"
+        f"[ENTITIES_EXTRACTED] {len(content_items)} items → {len(batches)} batch(es) "
+        f"(batch_size={batch_size})"
     )
 
     for idx, batch in enumerate(batches):
         batch_ids = {item["content_id"] for item in batch}
-        user_text = _build_batch_text(batch)
+        user_text = _build_batch_text(batch, char_cap)
         content_ids = list(batch_ids)
 
         try:
             raw_response = llm_call(
-                stage="entity_extraction",
+                stage=STAGE,
                 system=SYSTEM_EXTRACT_ENTITIES,
                 user_content=user_text,
                 input_artifacts=["extracted_content.json"],
@@ -97,14 +101,14 @@ def extract_entities(content_items: list[dict]) -> list[dict]:
     return all_mentions
 
 
-def _build_batch_text(batch: list[dict]) -> str:
+def _build_batch_text(batch: list[dict], char_cap: int = 1000) -> str:
     lines = [
         "Extract all financial entity mentions from the items below.\n"
     ]
     for item in batch:
         title = sanitise_text(item.get("title", "").strip())
         body = sanitise_text(item.get("body", "").strip())
-        text = f"{title} {body}".strip()[:1000]
+        text = f"{title} {body}".strip()[:char_cap]
         lines.append(
             f"---\ncontent_id: {item['content_id']}\n"
             f"source_url: {item['source_url']}\n"
