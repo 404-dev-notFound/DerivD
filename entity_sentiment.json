@@ -1,0 +1,329 @@
+[
+  {
+    "entity_id": "ENT_001",
+    "canonical_name": "EUR/USD",
+    "sentiment": "bearish",
+    "sentiment_score": -0.6,
+    "confidence": 0.7,
+    "evidence": [
+      {
+        "content_id": "CNT_e3a1cca8",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD Downside? Don't Miss These Trading Opportunities",
+        "reason": "Headline explicitly warns of 'Major EUR/USD Downside' driven by oil shock and hawkish Fed policy, indicating bearish outlook for the currency pair"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_002",
+    "canonical_name": "GBP",
+    "sentiment": "bullish",
+    "sentiment_score": 0.5,
+    "confidence": 0.65,
+    "evidence": [
+      {
+        "content_id": "CNT_05191cfc",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Sterling Today: Pound jumps as dollar sells off on Iran-Hormuz deal hopes",
+        "reason": "Pound described as 'jumps', indicating strong upward movement and positive sentiment for GBP"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_003",
+    "canonical_name": "USD",
+    "sentiment": "bearish",
+    "sentiment_score": -0.7,
+    "confidence": 0.85,
+    "evidence": [
+      {
+        "content_id": "CNT_05191cfc",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Sterling Today: Pound jumps as dollar sells off on Iran-Hormuz deal hopes",
+        "reason": "Dollar described as 'sells off', indicating downward pressure and negative sentiment"
+      },
+      {
+        "content_id": "CNT_8277b57a",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Losses by the Dollar as Focus on Diplomacy Continues",
+        "reason": "Explicitly mentions 'Losses by the Dollar', confirming bearish sentiment"
+      },
+      {
+        "content_id": "CNT_954f1587",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Dollar Tumbles and Gold Surges on US-Iran Ceasefire",
+        "reason": "Dollar described as 'Tumbles', indicating sharp decline and strongly bearish sentiment"
+      },
+      {
+        "content_id": "CNT_01691da3",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Why a Plunging Dollar Is Missing Out on the Relief Rally",
+        "reason": "Describes dollar as 'Plunging' and missing rally opportunities, reinforcing bearish outlook"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_004",
+    "canonical_name": "Federal Reserve",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "content_id": "CNT_e3a1cca8",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Oil Shock + Hawkish Fed = Major EUR/USD Downside? Don't Miss These Trading Opportunities",
+        "reason": "Fed described as 'Hawkish' but this is a policy stance description rather than positive/negative sentiment toward the institution itself"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_005",
+    "canonical_name": "Eurozone Inflation",
+    "sentiment": "bearish",
+    "sentiment_score": -0.5,
+    "confidence": 0.75,
+    "evidence": [
+      {
+        "content_id": "CNT_bcb63c3f",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Eurozone inflation hits 3% as oil prices spike and economic growth slows",
+        "reason": "Inflation 'hits 3%' coupled with oil price spikes and slowing growth indicates deteriorating economic conditions"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_006",
+    "canonical_name": "Crude Oil",
+    "sentiment": "bullish",
+    "sentiment_score": 0.6,
+    "confidence": 0.7,
+    "evidence": [
+      {
+        "content_id": "CNT_bcb63c3f",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Eurozone inflation hits 3% as oil prices spike and economic growth slows",
+        "reason": "Oil prices described as 'spike', indicating sharp upward movement and bullish price action"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_007",
+    "canonical_name": "GDP Growth",
+    "sentiment": "bearish",
+    "sentiment_score": -0.6,
+    "confidence": 0.75,
+    "evidence": [
+      {
+        "content_id": "CNT_bcb63c3f",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Eurozone inflation hits 3% as oil prices spike and economic growth slows",
+        "reason": "Economic growth explicitly described as 'slows', indicating deteriorating growth conditions"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_008",
+    "canonical_name": "European Central Bank",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.6,
+    "evidence": [
+      {
+        "content_id": "CNT_422aec38",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "ECB, Bank of England Set to Hold Rates Unchanged Today",
+        "reason": "Holding rates unchanged is a neutral policy action without directional sentiment"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_009",
+    "canonical_name": "Bank of England",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.6,
+    "evidence": [
+      {
+        "content_id": "CNT_422aec38",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "ECB, Bank of England Set to Hold Rates Unchanged Today",
+        "reason": "Holding rates unchanged is a neutral policy action without directional sentiment"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_010",
+    "canonical_name": "Eni S.p.A.",
+    "sentiment": "bullish",
+    "sentiment_score": 0.65,
+    "confidence": 0.75,
+    "evidence": [
+      {
+        "content_id": "CNT_ee26189b",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Eni Raises Share Buyback Plan to $3.3B",
+        "reason": "Company raising share buyback plan indicates confidence in business and typically signals positive shareholder value creation"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_011",
+    "canonical_name": "EUR",
+    "sentiment": "mixed",
+    "sentiment_score": 0.2,
+    "confidence": 0.6,
+    "evidence": [
+      {
+        "content_id": "CNT_7ce85b96",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro Could Still Be Worth a Buy Here",
+        "reason": "Acknowledges energy crisis as negative factor but suggests Euro 'Could Still Be Worth a Buy', indicating mixed but cautiously optimistic view"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_012",
+    "canonical_name": "Europe",
+    "sentiment": "mixed",
+    "sentiment_score": -0.2,
+    "confidence": 0.65,
+    "evidence": [
+      {
+        "content_id": "CNT_7ce85b96",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "An Energy Crisis Has Rocked Europe, but the Euro Could Still Be Worth a Buy Here",
+        "reason": "Describes energy crisis that has 'Rocked Europe', indicating significant negative impact, though with potential for recovery"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_013",
+    "canonical_name": "Gold",
+    "sentiment": "bullish",
+    "sentiment_score": 0.7,
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "content_id": "CNT_954f1587",
+        "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+        "source_span": "Dollar Tumbles and Gold Surges on US-Iran Ceasefire",
+        "reason": "Gold described as 'Surges', indicating strong upward movement and bullish sentiment"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_014",
+    "canonical_name": "International Energy Agency",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.4,
+    "evidence": [
+      {
+        "content_id": "CNT_05746d05",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group",
+        "reason": "Factual statement about coordination meeting without sentiment-indicating language"
+      },
+      {
+        "content_id": "CNT_5136fe19",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "The Heads of the International Energy Agency, International Monetary Fund, and World Bank Group met today as part of the coordination group they established in early April to maximize their institutions' response to the energy and economic impacts of the war in the Middle East.",
+        "reason": "Describes coordination efforts in response to crisis without directional sentiment"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_015",
+    "canonical_name": "International Monetary Fund",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.4,
+    "evidence": [
+      {
+        "content_id": "CNT_05746d05",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group",
+        "reason": "Factual statement about coordination meeting without sentiment-indicating language"
+      },
+      {
+        "content_id": "CNT_a3643dcf",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme",
+        "reason": "Factual statement about coordination meeting without sentiment-indicating language"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_016",
+    "canonical_name": "World Bank Group",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.4,
+    "evidence": [
+      {
+        "content_id": "CNT_05746d05",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group",
+        "reason": "Factual statement about coordination meeting without sentiment-indicating language"
+      },
+      {
+        "content_id": "CNT_a3643dcf",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme",
+        "reason": "Factual statement about coordination meeting without sentiment-indicating language"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_018",
+    "canonical_name": "World Food Programme",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.4,
+    "evidence": [
+      {
+        "content_id": "CNT_a3643dcf",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme",
+        "reason": "Factual statement about coordination meeting without sentiment-indicating language"
+      },
+      {
+        "content_id": "CNT_3f5b655c",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "The Heads of the International Monetary Fund (IMF), the World Bank Group (WBG) and the World Food Programme (WFP) met to discuss the global economic and food security impacts of the war in the Middle East.",
+        "reason": "Describes coordination efforts in response to crisis without directional sentiment"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_019",
+    "canonical_name": "Kristalina Georgieva",
+    "sentiment": "neutral",
+    "sentiment_score": 0.0,
+    "confidence": 0.35,
+    "evidence": [
+      {
+        "content_id": "CNT_5bddc811",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "Ahead of the 2026 Annual Meetings Kristalina Georgieva delivers a Curtain Raiser speech on the outlook for the global economy and policy priorities.",
+        "reason": "Factual description of speech event without sentiment-indicating language about the person"
+      }
+    ]
+  },
+  {
+    "entity_id": "ENT_021",
+    "canonical_name": "Energy Prices",
+    "sentiment": "bullish",
+    "sentiment_score": 0.6,
+    "confidence": 0.7,
+    "evidence": [
+      {
+        "content_id": "CNT_07d33766",
+        "source_url": "https://www.imf.org/en/News",
+        "source_span": "We are closely monitoring developments in the Middle East. So far, we have observed disruptions to trade and economic activity, surges in energy prices, and volatility in financial markets.",
+        "reason": "Energy prices described as experiencing 'surges', indicating upward price movement"
+      }
+    ]
+  }
+]

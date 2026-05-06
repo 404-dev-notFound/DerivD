@@ -2,10 +2,11 @@
 OpenRouter LLM client.
 
 Deterministic responsibilities (this file):
-- Making HTTP calls to OpenRouter
+- Loading anti-hallucination rules from hallucination.md (single source of truth)
+- Making HTTP calls to OpenRouter with per-call max_tokens override
 - Logging every call to llm_calls.jsonl
 - Retrying on transient errors (code-enforced, not model-enforced)
-- Parsing JSON responses with fallback (code-enforced)
+- Recovering from truncated JSON responses (code-enforced)
 - Validating evidence spans against source corpus (hallucination guard)
 
 NOT done here:
@@ -18,6 +19,7 @@ import hashlib
 import json
 import logging
 import os
+import re
 import datetime
 from typing import Optional
 
@@ -31,10 +33,54 @@ logger = logging.getLogger(__name__)
 OPENROUTER_BASE = "https://openrouter.ai/api/v1/chat/completions"
 MAX_RETRIES = 2
 
+# ── Hallucination skill — loaded once from hallucination.md ───────────────────
+# hallucination.md is the single source of truth for anti-hallucination rules.
+# These rules are prepended to EVERY system prompt automatically.
+
+def _load_hallucination_rules() -> str:
+    """Extract the Prompt-Level Constraints block from hallucination.md."""
+    hall_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "hallucination.md",
+    )
+    if not os.path.exists(hall_path):
+        logger.warning("[HALLUCINATION] hallucination.md not found; rules not injected")
+        return ""
+    try:
+        with open(hall_path, encoding="utf-8") as f:
+            content = f.read()
+        # Extract the fenced block under "## Prompt-Level Constraints"
+        match = re.search(
+            r"## Prompt-Level Constraints.*?```(.*?)```",
+            content,
+            re.DOTALL,
+        )
+        if match:
+            rules = match.group(1).strip()
+            logger.info("[HALLUCINATION] Injecting rules from hallucination.md into all LLM calls")
+            return rules
+    except Exception as e:
+        logger.warning(f"[HALLUCINATION] Could not load hallucination.md: {e}")
+    return ""
+
+
+_HALLUCINATION_RULES: str = _load_hallucination_rules()
+
+
+def _inject_rules(system: str) -> str:
+    """Prepend hallucination rules to any system prompt."""
+    if not _HALLUCINATION_RULES:
+        return system
+    return f"{_HALLUCINATION_RULES}\n\n---\n\n{system}"
+
+
+# ── HTTP client ────────────────────────────────────────────────────────────────
 
 def _get_client() -> httpx.Client:
-    return httpx.Client(timeout=120.0)
+    return httpx.Client(timeout=180.0)
 
+
+# ── LLM call ──────────────────────────────────────────────────────────────────
 
 def llm_call(
     stage: str,
@@ -44,19 +90,31 @@ def llm_call(
     output_artifact: str,
     source_url: Optional[str] = None,
     content_ids: Optional[list[str]] = None,
+    max_tokens: Optional[int] = None,
 ) -> str:
-    """Make one LLM call via OpenRouter, log it, return response text."""
+    """
+    Make one LLM call via OpenRouter, log it to llm_calls.jsonl, return response text.
+
+    Hallucination rules from hallucination.md are automatically prepended to
+    the system prompt. max_tokens defaults to the MAX_TOKENS env var but can
+    be overridden per-call for stages that produce large JSON responses.
+    """
     api_key = os.environ["OPENROUTER_API_KEY"]
     model = os.environ.get("LLM_MODEL", "anthropic/claude-sonnet-4-5")
-    max_tokens = int(os.environ.get("MAX_TOKENS", 4096))
+    effective_max_tokens = max_tokens or int(os.environ.get("MAX_TOKENS", 4096))
 
-    prompt_hash = hashlib.sha256((system + user_content).encode()).hexdigest()[:16]
+    # Inject hallucination rules (from hallucination.md) into every system prompt
+    effective_system = _inject_rules(system)
+
+    prompt_hash = hashlib.sha256(
+        (effective_system + user_content).encode()
+    ).hexdigest()[:16]
 
     payload = {
         "model": model,
-        "max_tokens": max_tokens,
+        "max_tokens": effective_max_tokens,
         "messages": [
-            {"role": "system", "content": system},
+            {"role": "system", "content": effective_system},
             {"role": "user", "content": user_content},
         ],
     }
@@ -104,6 +162,7 @@ def llm_call(
         "output_artifact": output_artifact,
         "estimated_input_tokens": input_tokens,
         "estimated_output_tokens": output_tokens,
+        "max_tokens_used": effective_max_tokens,
         "error": last_error,
     }
     with open("llm_calls.jsonl", "a", encoding="utf-8") as f:
@@ -112,28 +171,121 @@ def llm_call(
     return result
 
 
+# ── JSON parsing with truncation recovery ─────────────────────────────────────
+
 def parse_json_response(text: str) -> dict | list:
-    """Strip markdown fences and parse JSON. Returns empty dict on failure."""
+    """
+    Strip markdown fences and parse JSON.
+    If parsing fails (e.g. truncated due to max_tokens), attempt structural recovery.
+    Returns empty dict only when all recovery strategies fail.
+    """
     text = text.strip()
+
+    # Strip markdown code fences
     if text.startswith("```"):
         parts = text.split("```")
-        # parts[1] is the content after first fence
         inner = parts[1] if len(parts) > 1 else ""
         if inner.startswith("json"):
             inner = inner[4:]
         text = inner.strip()
+
+    # Happy path
     try:
         return json.loads(text)
     except json.JSONDecodeError as e:
-        logger.error(f"[JSON] Failed to parse LLM response: {e}\nRaw: {text[:300]}")
-        return {}
+        logger.warning(
+            f"[JSON] Primary parse failed ({e}), attempting recovery on "
+            f"{len(text)} char response..."
+        )
 
+    # Recovery: extract all complete JSON objects from a truncated array
+    recovered = _recover_partial_json(text)
+    if recovered:
+        logger.info(f"[JSON] Recovery succeeded")
+        return recovered
+
+    logger.error(f"[JSON] All parse strategies failed. Raw (first 400 chars): {text[:400]}")
+    return {}
+
+
+def _recover_partial_json(text: str) -> dict | list | None:
+    """
+    Recover a truncated JSON response of the form {"key": [...]}.
+
+    Strategy: scan for complete JSON objects inside the outermost array,
+    collect all that parse successfully, and re-wrap them.
+    This handles the common case where max_tokens cuts the response mid-object.
+    """
+    # Find the outer key name and the start of its array value
+    outer_match = re.match(r'\s*\{\s*"(\w+)"\s*:\s*\[', text)
+    if not outer_match:
+        # Try bare array
+        bare_match = re.match(r'\s*\[', text)
+        if bare_match:
+            return _extract_objects_from_array(text[bare_match.end() - 1:])
+        return None
+
+    key = outer_match.group(1)
+    array_content = text[outer_match.end():]  # everything after the opening [
+    objects = _extract_objects_from_array("[" + array_content)
+
+    if objects is not None:
+        logger.warning(
+            f"[JSON] Recovered {len(objects)} complete objects from truncated "
+            f'"{key}" array (response was cut mid-JSON)'
+        )
+        return {key: objects}
+    return None
+
+
+def _extract_objects_from_array(text: str) -> list | None:
+    """
+    Scan text for complete top-level JSON objects and return them as a list.
+    Handles truncation by ignoring the incomplete final object.
+    """
+    objects = []
+    depth = 0
+    obj_start = -1
+    in_string = False
+    escape_next = False
+
+    for i, ch in enumerate(text):
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == "\\" and in_string:
+            escape_next = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+
+        if ch == "{":
+            if depth == 0:
+                obj_start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and obj_start >= 0:
+                try:
+                    obj = json.loads(text[obj_start : i + 1])
+                    objects.append(obj)
+                    obj_start = -1
+                except json.JSONDecodeError:
+                    obj_start = -1  # malformed, skip
+
+    return objects if objects else None
+
+
+# ── Span validation (hallucination guard) ─────────────────────────────────────
 
 def validate_spans_against_corpus(evidence_list: list[dict], corpus: str) -> list[dict]:
     """
-    Code-enforced hallucination guard.
-    Checks that each evidence span's key words appear in the source corpus.
-    Removes spans that cannot be verified. Logs rejections.
+    Code-enforced hallucination guard: verify evidence spans exist in source corpus.
+    Uses 50% word-overlap threshold. Rejects spans that can't be verified.
+    Logs every rejection with [HALLUCINATION GUARD] prefix for auditability.
     """
     if not corpus:
         return evidence_list
@@ -159,7 +311,8 @@ def validate_spans_against_corpus(evidence_list: list[dict], corpus: str) -> lis
             validated.append(ev)
         else:
             logger.warning(
-                f"[HALLUCINATION GUARD] Rejected span with {overlap:.0%} overlap: '{span[:60]}'"
+                f"[HALLUCINATION GUARD] Rejected span with {overlap:.0%} word overlap: "
+                f"'{span[:60]}'"
             )
 
     return validated

@@ -1,0 +1,459 @@
+[
+  {
+    "content_id": "CNT_fc229ade",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "EUR/USD (EURUSD=X)",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_05191cfc",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Sterling Today: Pound jumps as dollar sells off on Iran-Hormuz deal hopes",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_e3a1cca8",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Oil Shock + Hawkish Fed = Major EUR/USD Downside? Don't Miss These Trading Opportunities",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_bcb63c3f",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Eurozone inflation hits 3% as oil prices spike and economic growth slows",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": [
+      {
+        "label": "Eurozone inflation hits",
+        "value": "3%",
+        "unit": "as",
+        "source_span": "Eurozone inflation hits 3% as oil prices spike and eco"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_422aec38",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "ECB, Bank of England Set to Hold Rates Unchanged Today",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_ee26189b",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Eni Raises Share Buyback Plan to $3.3B",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": [
+      {
+        "label": "s Share Buyback Plan to $",
+        "value": "3.3",
+        "unit": null,
+        "source_span": "s Share Buyback Plan to $3.3B"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_8277b57a",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Losses by the Dollar as Focus on Diplomacy Continues",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_7ce85b96",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "An Energy Crisis Has Rocked Europe, but the Euro Could Still Be Worth a Buy Here",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_1efda55f",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "How global fiscal policy is reacting to the recent energy shock",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_954f1587",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Dollar Tumbles and Gold Surges on US-Iran Ceasefire",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_01691da3",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Why a Plunging Dollar Is Missing Out on the Relief Rally",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_95d1f750",
+    "source_url": "https://finance.yahoo.com/quote/EURUSD%3DX/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "International Stocks Are Trouncing Growth Stocks and This ETF Pays You a 3% Yield on Top",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.239353Z",
+    "numerical_data": [
+      {
+        "label": "and This ETF Pays You a",
+        "value": "3%",
+        "unit": "Yield",
+        "source_span": "and This ETF Pays You a 3% Yield on Top"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_09f5c8d7",
+    "source_url": "https://finance.yahoo.com/markets/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Markets Overview",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.366701Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_bd7d0e73",
+    "source_url": "https://finance.yahoo.com/markets/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "Select a Sector for a Visual Breakdown",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.366701Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_c00f8cc1",
+    "source_url": "https://finance.yahoo.com/markets/",
+    "source_name": "Yahoo",
+    "content_type": "headline",
+    "title": "All Sectors",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.366701Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_e26e8a36",
+    "source_url": "https://finance.yahoo.com/markets/",
+    "source_name": "Yahoo",
+    "content_type": "article",
+    "title": "",
+    "body": "Note: Percentage % data on heatmap indicates Day Return",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.366701Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_a70e12ed",
+    "source_url": "https://www.federalreserve.gov/newsevents/pressreleases.htm",
+    "source_name": "Federalreserve",
+    "content_type": "headline",
+    "title": "Press Releases",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.403859Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_30f20419",
+    "source_url": "https://www.federalreserve.gov/newsevents/pressreleases.htm",
+    "source_name": "Federalreserve",
+    "content_type": "article",
+    "title": "",
+    "body": "An official website of the United States Government",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.403859Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_9d77c5b2",
+    "source_url": "https://www.federalreserve.gov/newsevents/pressreleases.htm",
+    "source_name": "Federalreserve",
+    "content_type": "article",
+    "title": "",
+    "body": "Official websites use .gov A .gov website belongs to an official government organization in the United States.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.403859Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_0c65a8b9",
+    "source_url": "https://www.federalreserve.gov/newsevents/pressreleases.htm",
+    "source_name": "Federalreserve",
+    "content_type": "article",
+    "title": "",
+    "body": "Secure .gov websites use HTTPS A lock ( Lock Locked padlock icon ) or https:// means you've safely connected to the .gov website. Share sensitive information only on official, secure websites.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.403859Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_5ab192f6",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "headline",
+    "title": "Statements on the war in the Middle East",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_05746d05",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "headline",
+    "title": "Joint Statement by the Heads of the International Energy Agency, International Monetary Fund, and World Bank Group",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_a3643dcf",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "headline",
+    "title": "Joint Statement by the Heads of the International Monetary Fund, the World Bank Group and the World Food Programme",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_bebc3e51",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "headline",
+    "title": "IMF Statement on the Middle East",
+    "body": "",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_91ea8245",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "Rising defense spending requires difficult fiscal choices to avoid raising vulnerabilities, while post-war recovery hinges on policies to reduce uncertainty",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_5bddc811",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "Ahead of the 2026 Annual Meetings Kristalina Georgieva delivers a Curtain Raiser speech on the outlook for the global economy and policy priorities.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": [
+      {
+        "label": "Ahead of the",
+        "value": "2026",
+        "unit": null,
+        "source_span": "Ahead of the 2026 Annual Meetings Kristalin"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_e1cde12b",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "The 2026 Spring Meetings will be held from Monday, April 13, through Saturday, April 18, at the IMF and World Bank in Washington, DC.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": [
+      {
+        "label": "The",
+        "value": "2026",
+        "unit": null,
+        "source_span": "The 2026 Spring Meetings will be h"
+      },
+      {
+        "label": "held from Monday, April",
+        "value": "13,",
+        "unit": null,
+        "source_span": "held from Monday, April 13, through Saturday, April 1"
+      },
+      {
+        "label": "through Saturday, April",
+        "value": "18,",
+        "unit": null,
+        "source_span": "through Saturday, April 18, at the IMF and World Bank"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_ecac720e",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "The IMF Press Center is a password-protected site for working journalists.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_1f942453",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "Sign up to receive free e-mail notices when new series and/or country items are posted on the IMF website.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_5136fe19",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "The Heads of the International Energy Agency, International Monetary Fund, and World Bank Group met today as part of the coordination group they established in early April to maximize their institutions’ response to the energy and economic impacts of the war in the Middle East. Read More",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_3f5b655c",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "The Heads of the International Monetary Fund (IMF), the World Bank Group (WBG) and the World Food Programme (WFP) met to discuss the global economic and food security impacts of the war in the Middle East. Read More",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_07d33766",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "We are closely monitoring developments in the Middle East. So far, we have observed disruptions to trade and economic activity, surges in energy prices, and volatility in financial markets. Read More",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_637c73d2",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "Strengthening innovation could help boost productivity growth by 40 percent, equal to adding the output of the country’s fourth-largest state economy",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": [
+      {
+        "label": "t productivity growth by",
+        "value": "40 percent",
+        "unit": null,
+        "source_span": "t productivity growth by 40 percent, equal to adding the out"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_cfd85d9e",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "Knocking down internal trade barriers could boost output in Canada by 7 perc",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": [
+      {
+        "label": "oost output in Canada by",
+        "value": "7",
+        "unit": null,
+        "source_span": "oost output in Canada by 7 perc"
+      }
+    ]
+  },
+  {
+    "content_id": "CNT_38fe7a3d",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "Prudent fiscal policy, vigilant financial oversight, and deeper labor and investment reforms can keep Saudi Arabia’s transformation on track",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  },
+  {
+    "content_id": "CNT_2ed6f83e",
+    "source_url": "https://www.imf.org/en/News",
+    "source_name": "Imf",
+    "content_type": "article",
+    "title": "",
+    "body": "@ International Monetary Fund. All rights reserved.",
+    "published_at": null,
+    "extracted_at": "2026-05-06T18:04:10.425007Z",
+    "numerical_data": []
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "total_llm_calls": 16,
+  "failed_calls": 0,
+  "total_input_tokens": 27499,
+  "total_output_tokens": 30153,
+  "total_cost_usd": 0.534792,
+  "by_stage": {
+    "entity_extraction": {
+      "call_count": 4,
+      "input_tokens": 5633,
+      "output_tokens": 7787,
+      "cost_usd": 0.133704
+    },
+    "entity_resolution": {
+      "call_count": 3,
+      "input_tokens": 7804,
+      "output_tokens": 9182,
+      "cost_usd": 0.16114199999999998
+    },
+    "qa_and_conflict_detection": {
+      "call_count": 2,
+      "input_tokens": 1787,
+      "output_tokens": 1108,
+      "cost_usd": 0.021980999999999997
+    },
+    "report_generation": {
+      "call_count": 6,
+      "input_tokens": 9123,
+      "output_tokens": 7980,
+      "cost_usd": 0.14706899999999998
+    },
+    "entity_sentiment_scoring": {
+      "call_count": 1,
+      "input_tokens": 3152,
+      "output_tokens": 4096,
+      "cost_usd": 0.07089599999999999
+    }
+  },
+  "efficiency_strategy": "Content deduplication via SHA-256 hash before LLM calls eliminates redundant processing of repeated content across sources. Entity mentions batched per source (batch_size=35) to reduce LLM round-trips. Fallback to empty responses on LLM failure prevents pipeline stalls."
+}

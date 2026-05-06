@@ -34,8 +34,8 @@ services:
       - .env
     volumes:
       - ./sources.json:/app/sources.json:ro
-      # Write artifacts back to host for inspection
-      - .:/app/output
+      # Mount only the artifacts output directory — not the full project (security)
+      - ./pipeline_output:/app/pipeline_output
     environment:
       - PYTHONUNBUFFERED=1
     profiles:

@@ -35,7 +35,7 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Query
+from fastapi import BackgroundTasks, Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, PlainTextResponse
 
@@ -48,12 +48,32 @@ app = FastAPI(
     version="1.0.0",
 )
 
+_allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_allowed_origins,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "X-API-Key"],
 )
+
+
+# ── API key auth (optional — set API_SECRET_KEY env var to enable) ────────────
+_API_SECRET = os.environ.get("API_SECRET_KEY", "")
+
+
+def _require_api_key(x_api_key: Optional[str] = Header(default=None)) -> None:
+    """
+    Protect mutating endpoints with a shared API key.
+    If API_SECRET_KEY is not set the check is skipped (dev mode — log warning).
+    """
+    if not _API_SECRET:
+        logger.warning(
+            "[AUTH] API_SECRET_KEY not set — pipeline endpoints are unprotected. "
+            "Set API_SECRET_KEY env var for production."
+        )
+        return
+    if x_api_key != _API_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key header")
 
 logger = logging.getLogger("api")
 
@@ -208,7 +228,10 @@ def root() -> dict:
 
 
 @app.post("/pipeline/run", status_code=202, tags=["pipeline"])
-def run_pipeline(background_tasks: BackgroundTasks) -> dict:
+def run_pipeline(
+    background_tasks: BackgroundTasks,
+    _auth: None = Depends(_require_api_key),
+) -> dict:
     """
     Start the pipeline. Returns 202 immediately; pipeline runs in background.
     Returns 409 if a run is already in progress.
@@ -276,7 +299,11 @@ def list_reports() -> dict:
 @app.get("/reports/{name}", tags=["reports"])
 def get_report(name: str) -> PlainTextResponse:
     """Fetch a report by filename (e.g. trader_brief.md)."""
-    path = Path("reports") / name
+    # Path traversal guard: resolve and verify the path stays inside reports/
+    reports_root = Path("reports").resolve()
+    path = (reports_root / name).resolve()
+    if not str(path).startswith(str(reports_root)):
+        raise HTTPException(status_code=400, detail="Invalid report name")
     if not path.exists():
         raise HTTPException(
             status_code=404,

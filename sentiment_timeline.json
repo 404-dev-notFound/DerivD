@@ -1,0 +1,180 @@
+[
+  {
+    "entity_id": "ENT_001",
+    "timestamp": "2026-05-06",
+    "sentiment": "bearish",
+    "source_content_ids": [
+      "CNT_e3a1cca8"
+    ],
+    "summary": "EUR/USD sentiment: bearish (score=-0.60)"
+  },
+  {
+    "entity_id": "ENT_002",
+    "timestamp": "2026-05-06",
+    "sentiment": "bullish",
+    "source_content_ids": [
+      "CNT_05191cfc"
+    ],
+    "summary": "GBP sentiment: bullish (score=0.50)"
+  },
+  {
+    "entity_id": "ENT_003",
+    "timestamp": "2026-05-06",
+    "sentiment": "bearish",
+    "source_content_ids": [
+      "CNT_05191cfc",
+      "CNT_8277b57a",
+      "CNT_954f1587",
+      "CNT_01691da3"
+    ],
+    "summary": "USD sentiment: bearish (score=-0.70)"
+  },
+  {
+    "entity_id": "ENT_004",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_e3a1cca8"
+    ],
+    "summary": "Federal Reserve sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_005",
+    "timestamp": "2026-05-06",
+    "sentiment": "bearish",
+    "source_content_ids": [
+      "CNT_bcb63c3f"
+    ],
+    "summary": "Eurozone Inflation sentiment: bearish (score=-0.50)"
+  },
+  {
+    "entity_id": "ENT_006",
+    "timestamp": "2026-05-06",
+    "sentiment": "bullish",
+    "source_content_ids": [
+      "CNT_bcb63c3f"
+    ],
+    "summary": "Crude Oil sentiment: bullish (score=0.60)"
+  },
+  {
+    "entity_id": "ENT_007",
+    "timestamp": "2026-05-06",
+    "sentiment": "bearish",
+    "source_content_ids": [
+      "CNT_bcb63c3f"
+    ],
+    "summary": "GDP Growth sentiment: bearish (score=-0.60)"
+  },
+  {
+    "entity_id": "ENT_008",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_422aec38"
+    ],
+    "summary": "European Central Bank sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_009",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_422aec38"
+    ],
+    "summary": "Bank of England sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_010",
+    "timestamp": "2026-05-06",
+    "sentiment": "bullish",
+    "source_content_ids": [
+      "CNT_ee26189b"
+    ],
+    "summary": "Eni S.p.A. sentiment: bullish (score=0.65)"
+  },
+  {
+    "entity_id": "ENT_011",
+    "timestamp": "2026-05-06",
+    "sentiment": "mixed",
+    "source_content_ids": [
+      "CNT_7ce85b96"
+    ],
+    "summary": "EUR sentiment: mixed (score=0.20)"
+  },
+  {
+    "entity_id": "ENT_012",
+    "timestamp": "2026-05-06",
+    "sentiment": "mixed",
+    "source_content_ids": [
+      "CNT_7ce85b96"
+    ],
+    "summary": "Europe sentiment: mixed (score=-0.20)"
+  },
+  {
+    "entity_id": "ENT_013",
+    "timestamp": "2026-05-06",
+    "sentiment": "bullish",
+    "source_content_ids": [
+      "CNT_954f1587"
+    ],
+    "summary": "Gold sentiment: bullish (score=0.70)"
+  },
+  {
+    "entity_id": "ENT_014",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_05746d05",
+      "CNT_5136fe19"
+    ],
+    "summary": "International Energy Agency sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_015",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_05746d05",
+      "CNT_a3643dcf"
+    ],
+    "summary": "International Monetary Fund sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_016",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_05746d05",
+      "CNT_a3643dcf"
+    ],
+    "summary": "World Bank Group sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_018",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_a3643dcf",
+      "CNT_3f5b655c"
+    ],
+    "summary": "World Food Programme sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_019",
+    "timestamp": "2026-05-06",
+    "sentiment": "neutral",
+    "source_content_ids": [
+      "CNT_5bddc811"
+    ],
+    "summary": "Kristalina Georgieva sentiment: neutral (score=0.00)"
+  },
+  {
+    "entity_id": "ENT_021",
+    "timestamp": "2026-05-06",
+    "sentiment": "bullish",
+    "source_content_ids": [
+      "CNT_07d33766"
+    ],
+    "summary": "Energy Prices sentiment: bullish (score=0.60)"
+  }
+]

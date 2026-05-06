@@ -12,6 +12,8 @@ import logging
 from urllib.parse import urlparse
 from typing import Optional
 
+import ipaddress
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -27,16 +29,59 @@ NUMERICAL_PATTERN = re.compile(
     r"(?:\s+(?P<unit>[A-Za-z][A-Za-z/]+))?"
 )
 
+_ALLOWED_SCHEMES = {"http", "https"}
+_BLOCKED_HOSTS = {"localhost", "127.0.0.1", "0.0.0.0", "::1"}
+
+# Prompt injection patterns to strip from fetched content before LLM use
+_INJECTION_PATTERN = re.compile(
+    r"^\s*(ignore|disregard|forget|system\s*:|assistant\s*:|<\s*/?system|<\s*/?instruction)",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def _validate_url(url: str) -> None:
+    """SSRF guard: block private/internal IPs and disallowed schemes. Raises ValueError."""
+    parsed = urlparse(url)
+    if parsed.scheme not in _ALLOWED_SCHEMES:
+        raise ValueError(f"Disallowed URL scheme: {parsed.scheme!r}")
+    host = (parsed.hostname or "").lower()
+    if host in _BLOCKED_HOSTS:
+        raise ValueError(f"Blocked host: {host!r}")
+    try:
+        addr = ipaddress.ip_address(host)
+        if addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved:
+            raise ValueError(f"Private/internal IP address blocked: {host!r}")
+    except ValueError as exc:
+        # Re-raise only if it's our own SSRF error, not the "not an IP" error
+        if "Private" in str(exc) or "Blocked" in str(exc) or "Disallowed" in str(exc):
+            raise
+
+
+def sanitise_text(text: str) -> str:
+    """
+    Strip prompt-injection patterns from web-fetched text before LLM submission.
+    Removes lines that start with common injection prefixes (code-enforced guard).
+    """
+    lines = text.splitlines()
+    clean = [ln for ln in lines if not _INJECTION_PATTERN.match(ln)]
+    return "\n".join(clean)
+
 
 def fetch_source(url: str, timeout: int = 20) -> tuple[Optional[str], Optional[str]]:
-    """Fetch raw HTML. Returns (html, error_message). Never raises."""
+    """Fetch raw HTML. Validates URL for SSRF first. Returns (html, error_message). Never raises."""
+    try:
+        _validate_url(url)
+    except ValueError as e:
+        err = f"URL rejected (security): {e}"
+        logger.error(f"[FETCH] {err}")
+        return None, err
     try:
         resp = requests.get(url, headers=HEADERS, timeout=timeout)
         resp.raise_for_status()
         logger.info(f"[FETCH] OK {url} ({len(resp.text)} chars)")
         return resp.text, None
     except Exception as e:
-        err = f"Fetch failed for {url}: {e}"
+        err = f"Fetch failed for {url}: {type(e).__name__}"
         logger.error(f"[FETCH] {err}")
         return None, err
 

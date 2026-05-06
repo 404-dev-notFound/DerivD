@@ -12,6 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
+from utils.content_utils import sanitise_text
 
 logger = logging.getLogger(__name__)
 
@@ -101,8 +102,8 @@ def _build_batch_text(batch: list[dict]) -> str:
         "Extract all financial entity mentions from the items below.\n"
     ]
     for item in batch:
-        title = item.get("title", "").strip()
-        body = item.get("body", "").strip()
+        title = sanitise_text(item.get("title", "").strip())
+        body = sanitise_text(item.get("body", "").strip())
         text = f"{title} {body}".strip()[:1000]
         lines.append(
             f"---\ncontent_id: {item['content_id']}\n"
