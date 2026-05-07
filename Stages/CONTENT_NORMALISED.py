@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.content_utils import compute_content_hash
 from utils.models import ContentItem, NumericalData
 from utils.paths import EXTRACTED_CONTENT
+from utils.artifact_store import atomic_write_json
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = EXTRACTED_CONTENT
@@ -55,7 +56,6 @@ def normalise_content(raw_items: list[dict]) -> list[dict]:
         f"{skipped_dup} duplicates, {skipped_invalid} invalid"
     )
 
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(validated, f, ensure_ascii=False, indent=2)
-    logger.info(f"[CONTENT_NORMALISED] Written → {OUTPUT_PATH}")
+    atomic_write_json(OUTPUT_PATH, validated)
+    logger.info(f"[CONTENT_NORMALISED] Written -> {OUTPUT_PATH}")
     return validated

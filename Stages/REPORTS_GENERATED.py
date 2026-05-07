@@ -11,6 +11,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import os
+import tempfile
 from utils.llm_client import llm_call, parse_json_response
 from utils.config import get_max_tokens_for_stage
 from utils.paths import ENTITIES, ENTITY_SENTIMENT, QA_REPORT, EXTRACTED_CONTENT, REPORTS_DIR
@@ -101,8 +103,20 @@ def generate_reports(
 
             report_text = raw.strip() + DISCLAIMER
 
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(report_text)
+            # Atomic text write — same tmp+replace pattern as JSON artifacts
+            dir_ = os.path.dirname(os.path.abspath(output_path))
+            os.makedirs(dir_, exist_ok=True)
+            fd, tmp = tempfile.mkstemp(dir=dir_, suffix=".tmp")
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as f:
+                    f.write(report_text)
+                os.replace(tmp, output_path)
+            except Exception:
+                try:
+                    os.unlink(tmp)
+                except OSError:
+                    pass
+                raise
             written.append(output_path)
             logger.info(f"[REPORTS] Written → {output_path}")
 

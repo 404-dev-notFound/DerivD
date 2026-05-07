@@ -16,6 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.config import get_low_confidence_threshold
 from utils.models import RunMetrics, TimelineItem
 from utils.paths import RUN_METRICS, SENTIMENT_TIMELINE, LLM_CALLS
+from utils.artifact_store import atomic_write_json
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +69,11 @@ def finalise(
         error_log=combined,
     )
 
-    with open(RUN_METRICS, "w", encoding="utf-8") as f:
-        json.dump(metrics.model_dump(), f, ensure_ascii=False, indent=2)
+    atomic_write_json(RUN_METRICS, metrics.model_dump())
     logger.info(f"[FINALISED] Written -> {RUN_METRICS}")
 
     timeline = _build_timeline(sentiments, content_items)
-    with open(SENTIMENT_TIMELINE, "w", encoding="utf-8") as f:
-        json.dump(timeline, f, ensure_ascii=False, indent=2)
+    atomic_write_json(SENTIMENT_TIMELINE, timeline)
     logger.info(
         f"[FINALISED] Written -> {SENTIMENT_TIMELINE} ({len(timeline)} timeline items)"
     )

@@ -18,6 +18,7 @@ from utils.llm_client import llm_call, parse_json_response
 from utils.models import Entity, SourceMention
 from utils.config import get_stage_param, get_max_tokens_for_stage
 from utils.paths import EXTRACTED_CONTENT, ENTITIES
+from utils.artifact_store import atomic_write_json
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = ENTITIES
@@ -171,8 +172,7 @@ def _validate(raw_entities: list[dict], valid_ids: set[str]) -> list[dict]:
 
 
 def _write(entities: list[dict], total_raw: int) -> None:
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(entities, f, ensure_ascii=False, indent=2)
+    atomic_write_json(OUTPUT_PATH, entities)
     logger.info(
-        f"[ENTITIES_RESOLVED] {len(entities)}/{total_raw} entities written → {OUTPUT_PATH}"
+        f"[ENTITIES_RESOLVED] {len(entities)}/{total_raw} entities written -> {OUTPUT_PATH}"
     )

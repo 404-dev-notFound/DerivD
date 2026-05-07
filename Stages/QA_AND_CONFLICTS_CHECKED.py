@@ -18,6 +18,7 @@ from utils.models import QAIssue
 from utils.config import get_low_confidence_threshold, get_max_tokens_for_stage
 from utils.paths import ENTITIES, ENTITY_SENTIMENT, EXTRACTED_CONTENT, QA_REPORT
 from utils.content_utils import sanitise_url_for_prompt
+from utils.artifact_store import atomic_write_json
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = QA_REPORT
@@ -171,6 +172,5 @@ def _build_user_content(
 
 
 def _write(issues: list[dict]) -> None:
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(issues, f, ensure_ascii=False, indent=2)
-    logger.info(f"[QA] Written → {OUTPUT_PATH} ({len(issues)} issues)")
+    atomic_write_json(OUTPUT_PATH, issues)
+    logger.info(f"[QA] Written -> {OUTPUT_PATH} ({len(issues)} issues)")

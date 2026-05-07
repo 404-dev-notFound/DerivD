@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.config import get_pricing, load_config
 from utils.paths import COST_REPORT, LLM_CALLS, EXTRACTED_CONTENT, ENTITIES
+from utils.artifact_store import atomic_write_json
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = COST_REPORT
@@ -212,6 +213,5 @@ def _empty_report() -> dict:
 
 
 def _write(report: dict) -> None:
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, indent=2)
-    logger.info(f"[COST] Written → {OUTPUT_PATH}")
+    atomic_write_json(OUTPUT_PATH, report)
+    logger.info(f"[COST] Written -> {OUTPUT_PATH}")

@@ -16,6 +16,7 @@ from utils.models import EntitySentiment, SentimentEvidence
 from utils.config import get_max_tokens_for_stage, get_stage_param
 from utils.paths import ENTITIES, EXTRACTED_CONTENT, ENTITY_SENTIMENT
 from utils.content_utils import sanitise_url_for_prompt
+from utils.artifact_store import atomic_write_json
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = ENTITY_SENTIMENT
@@ -174,8 +175,7 @@ def _build_user_content(entities: list[dict], content_items: list[dict]) -> str:
 
 
 def _write(records: list[dict]) -> None:
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(records, f, ensure_ascii=False, indent=2)
+    atomic_write_json(OUTPUT_PATH, records)
     logger.info(
-        f"[ENTITY_SENTIMENT_SCORED] Written → {OUTPUT_PATH} ({len(records)} records)"
+        f"[ENTITY_SENTIMENT_SCORED] Written -> {OUTPUT_PATH} ({len(records)} records)"
     )
