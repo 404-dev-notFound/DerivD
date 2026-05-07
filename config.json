@@ -37,6 +37,10 @@
       "rationale": "Multi-audience narrative synthesis. Sonnet 4.5 produces clean grounded prose; Haiku tends to over-abbreviate."
     }
   },
+  "pipeline": {
+    "budget_limit_usd": 2.00,
+    "budget_note": "Hard cap for a single run. BudgetExceededError is raised after any call that pushes total spend above this value. Set to null to disable. Increase for larger source sets."
+  },
   "defaults": {
     "model_tier": "tier_standard",
     "max_tokens": 4096,

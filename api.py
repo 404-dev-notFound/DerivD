@@ -148,6 +148,8 @@ def _run_pipeline() -> None:
     from Stages.REPORTS_GENERATED import generate_reports
     from Stages.COST_REPORT_GENERATED import generate_cost_report
     from Stages.RESULTS_FINALISED import finalise
+    from utils.config import get_budget_limit
+    from utils.llm_client import configure_budget, BudgetExceededError
 
     start = time.time()
     _set_state(
@@ -157,6 +159,10 @@ def _run_pipeline() -> None:
         error=None,
     )
     pipeline_errors: list[str] = []
+
+    budget = get_budget_limit()
+    if budget is not None:
+        configure_budget(budget)
 
     try:
         sources = load_sources(SOURCES)
@@ -215,10 +221,18 @@ def _run_pipeline() -> None:
             duration_seconds=round(time.time() - start, 2),
         )
 
+    except BudgetExceededError as exc:
+        logger.error(f"[PIPELINE] Budget exceeded: {exc}")
+        _set_state(
+            status="failed",
+            error=f"Budget limit reached — {exc}",
+            completed_at=datetime.utcnow().isoformat() + "Z",
+            duration_seconds=round(time.time() - start, 2),
+        )
     except Exception as exc:
         logger.exception("Pipeline failed")
         # Sanitise exception — never expose internal paths/variable names to callers.
-        # Full detail is available in pipeline.log via GET /pipeline/logs.
+        # Full detail available in pipeline.log via GET /pipeline/logs.
         _set_state(
             status="failed",
             error="Pipeline failed — check GET /pipeline/logs for details.",

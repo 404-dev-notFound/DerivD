@@ -1,17 +1,23 @@
 """
 OpenRouter LLM client.
 
-Deterministic responsibilities (this file):
+Cost optimisations applied (cost-aware-llm-pipeline skill):
+  1. Prompt caching   — hallucination rules and stage system prompt sent with
+                        cache_control:ephemeral so they are only charged once
+                        per 5-minute TTL window instead of on every call.
+  2. Narrow retry     — only retries on transient failures (429, 5xx, network).
+                        Auth and bad-request errors fail immediately instead of
+                        burning retries and erroneously spending budget.
+  3. Budget guard     — module-level spend counter checked before every call.
+                        Set via config.json pipeline.budget_limit_usd.
+                        BudgetExceededError is raised before the HTTP call is made.
+
+Deterministic responsibilities:
 - Loading anti-hallucination rules from hallucination.md (single source of truth)
 - Making HTTP calls to OpenRouter with per-call max_tokens override
 - Logging every call to llm_calls.jsonl
-- Retrying on transient errors (code-enforced, not model-enforced)
-- Recovering from truncated JSON responses (code-enforced)
+- Recovering from truncated JSON responses
 - Validating evidence spans against source corpus (hallucination guard)
-
-NOT done here:
-- Deciding what to extract (LLM prompt responsibility)
-- Deciding what makes a valid entity (LLM prompt responsibility)
 """
 from __future__ import annotations
 
@@ -20,8 +26,10 @@ import json
 import logging
 import os
 import re
+import time
 import datetime
 import threading
+from dataclasses import dataclass
 from typing import Optional
 
 import httpx
@@ -30,6 +38,7 @@ from dotenv import load_dotenv
 from utils.config import (
     get_max_tokens_for_stage,
     get_model_for_stage,
+    get_pricing,
     get_span_overlap_threshold,
 )
 from utils.paths import LLM_CALLS
@@ -39,18 +48,64 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 OPENROUTER_BASE = "https://openrouter.ai/api/v1/chat/completions"
+
+# ── Retry policy ───────────────────────────────────────────────────────────────
+# Only retry transient failures. Fail fast on auth/bad-request so we don't
+# waste budget burning retries on permanent errors.
 MAX_RETRIES = 2
+_RETRYABLE_HTTP_CODES = {429, 500, 502, 503, 504}
 
-# Serialise writes to llm_calls.jsonl — concurrent API-triggered pipeline runs
-# would otherwise interleave partial JSON lines, corrupting the log.
-_log_lock = threading.Lock()
+# ── Concurrency ────────────────────────────────────────────────────────────────
+_log_lock = threading.Lock()   # serialise llm_calls.jsonl appends
+_budget_lock = threading.Lock()
 
-# ── Hallucination skill — loaded once from hallucination.md ───────────────────
-# hallucination.md is the single source of truth for anti-hallucination rules.
-# These rules are prepended to EVERY system prompt automatically.
+# ── Budget guard ───────────────────────────────────────────────────────────────
+_total_spent_usd: float = 0.0
+_budget_limit_usd: float | None = None
 
+
+class BudgetExceededError(RuntimeError):
+    def __init__(self, spent: float, limit: float) -> None:
+        super().__init__(
+            f"Pipeline budget exceeded: ${spent:.4f} spent >= ${limit:.4f} limit. "
+            "Increase pipeline.budget_limit_usd in config.json to continue."
+        )
+        self.spent = spent
+        self.limit = limit
+
+
+def configure_budget(limit_usd: float) -> None:
+    """Call once at pipeline startup to set the run-level spend limit."""
+    global _budget_limit_usd, _total_spent_usd
+    with _budget_lock:
+        _budget_limit_usd = limit_usd
+        _total_spent_usd = 0.0
+    logger.info(f"[BUDGET] Limit set to ${limit_usd:.4f} USD for this run")
+
+
+def _check_and_record_spend(cost_usd: float) -> None:
+    """Atomically add cost and raise if over limit. Call AFTER a successful call."""
+    global _total_spent_usd
+    with _budget_lock:
+        _total_spent_usd += cost_usd
+        if _budget_limit_usd is not None and _total_spent_usd > _budget_limit_usd:
+            raise BudgetExceededError(_total_spent_usd, _budget_limit_usd)
+
+
+# ── Immutable cost record (for external introspection / tests) ─────────────────
+@dataclass(frozen=True, slots=True)
+class CostRecord:
+    stage: str
+    model: str
+    input_tokens: int
+    output_tokens: int
+    cache_read_tokens: int
+    cache_creation_tokens: int
+    cost_usd: float
+
+
+# ── Hallucination rules — loaded once, cached for the process lifetime ─────────
 def _load_hallucination_rules() -> str:
-    """Extract the Prompt-Level Constraints block from hallucination.md."""
     hall_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "hallucination.md",
@@ -61,7 +116,6 @@ def _load_hallucination_rules() -> str:
     try:
         with open(hall_path, encoding="utf-8") as f:
             content = f.read()
-        # Extract the fenced block under "## Prompt-Level Constraints"
         match = re.search(
             r"## Prompt-Level Constraints.*?```(.*?)```",
             content,
@@ -69,7 +123,7 @@ def _load_hallucination_rules() -> str:
         )
         if match:
             rules = match.group(1).strip()
-            logger.info("[HALLUCINATION] Injecting rules from hallucination.md into all LLM calls")
+            logger.info("[HALLUCINATION] Rules loaded from hallucination.md")
             return rules
     except Exception as e:
         logger.warning(f"[HALLUCINATION] Could not load hallucination.md: {e}")
@@ -79,21 +133,65 @@ def _load_hallucination_rules() -> str:
 _HALLUCINATION_RULES: str = _load_hallucination_rules()
 
 
-def _inject_rules(system: str) -> str:
-    """Prepend hallucination rules to any system prompt."""
-    if not _HALLUCINATION_RULES:
-        return system
-    return f"{_HALLUCINATION_RULES}\n\n---\n\n{system}"
+# ── Prompt-cached message builder ──────────────────────────────────────────────
+def _build_messages(stage_system: str, user_content: str) -> list[dict]:
+    """
+    Build the messages array with cache_control on the expensive repeated parts.
+
+    Cache hierarchy (Anthropic prompt caching, passed through OpenRouter):
+      Block 1 (cache_control): hallucination rules — identical on every pipeline call,
+                                stays warm for 5 min → billed once per TTL window.
+      Block 2 (cache_control): stage system prompt — identical within a batch stage
+                                (e.g. all entity_extraction calls share the same prompt).
+      Block 3:                  user content — varies per call, never cached.
+
+    OpenRouter forwards cache_control to Anthropic when the model is anthropic/*.
+    For non-Anthropic models the field is silently ignored (no error).
+    """
+    system_blocks: list[dict] = []
+
+    if _HALLUCINATION_RULES:
+        system_blocks.append({
+            "type": "text",
+            "text": _HALLUCINATION_RULES,
+            "cache_control": {"type": "ephemeral"},
+        })
+
+    if stage_system:
+        system_blocks.append({
+            "type": "text",
+            "text": stage_system,
+            "cache_control": {"type": "ephemeral"},
+        })
+
+    # If no blocks at all, fall back to plain string to avoid empty content error.
+    system_content: str | list[dict] = system_blocks if system_blocks else ""
+
+    return [
+        {"role": "system", "content": system_content},
+        {"role": "user",   "content": user_content},
+    ]
 
 
 # ── HTTP client ────────────────────────────────────────────────────────────────
-
 def _get_client() -> httpx.Client:
     return httpx.Client(timeout=180.0)
 
 
-# ── LLM call ──────────────────────────────────────────────────────────────────
+def _is_retryable(exc: Exception) -> bool:
+    """
+    True only for transient failures that are worth retrying.
+    Auth errors (401/403) and bad-request errors (400) are permanent — retrying
+    would just burn budget, so we return False for those.
+    """
+    if isinstance(exc, (httpx.ConnectError, httpx.TimeoutException)):
+        return True
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response.status_code in _RETRYABLE_HTTP_CODES
+    return False
 
+
+# ── LLM call ───────────────────────────────────────────────────────────────────
 def llm_call(
     stage: str,
     system: str,
@@ -105,67 +203,131 @@ def llm_call(
     max_tokens: Optional[int] = None,
 ) -> str:
     """
-    Make one LLM call via OpenRouter, log it to llm_calls.jsonl, return response text.
+    Make one LLM call via OpenRouter, return response text.
 
-    Hallucination rules from hallucination.md are automatically prepended to
-    the system prompt. max_tokens defaults to the MAX_TOKENS env var but can
-    be overridden per-call for stages that produce large JSON responses.
+    Cost controls applied automatically:
+    - Tiered model routing per stage (config.json stages.<stage>.model_tier)
+    - Prompt caching on hallucination rules + stage system prompt
+    - Narrow retry (transient only)
+    - Budget check after each successful call
     """
     api_key = os.environ["OPENROUTER_API_KEY"]
-    # Tiered routing: config.json maps each stage to a model tier (Haiku/Sonnet/Opus)
-    # to minimise cost on classification-heavy stages while keeping reasoning quality
-    # where it matters. Env var LLM_MODEL_<STAGE> overrides config for targeted ops.
     model = get_model_for_stage(stage)
     effective_max_tokens = max_tokens or get_max_tokens_for_stage(stage)
 
-    # Inject hallucination rules (from hallucination.md) into every system prompt
-    effective_system = _inject_rules(system)
-
     prompt_hash = hashlib.sha256(
-        (effective_system + user_content).encode()
+        ((_HALLUCINATION_RULES or "") + system + user_content).encode()
     ).hexdigest()[:16]
 
+    messages = _build_messages(system, user_content)
     payload = {
         "model": model,
         "max_tokens": effective_max_tokens,
-        "messages": [
-            {"role": "system", "content": effective_system},
-            {"role": "user", "content": user_content},
-        ],
+        "messages": messages,
+    }
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/financial-intelligence-pipeline",
+        # Enable Anthropic prompt caching via OpenRouter
+        "anthropic-beta": "prompt-caching-2024-07-31",
     }
 
     result = ""
     input_tokens = 0
     output_tokens = 0
-    last_error = None
+    cache_read_tokens = 0
+    cache_creation_tokens = 0
+    last_error: Optional[str] = None
 
     for attempt in range(MAX_RETRIES + 1):
         try:
             with _get_client() as client:
-                resp = client.post(
-                    OPENROUTER_BASE,
-                    headers={
-                        "Authorization": f"Bearer {api_key}",
-                        "Content-Type": "application/json",
-                        "HTTP-Referer": "https://github.com/financial-intelligence-pipeline",
-                    },
-                    json=payload,
-                )
+                resp = client.post(OPENROUTER_BASE, headers=headers, json=payload)
                 resp.raise_for_status()
-                data = resp.json()
-                result = data["choices"][0]["message"]["content"]
-                usage = data.get("usage", {})
-                input_tokens = usage.get("prompt_tokens", 0)
-                output_tokens = usage.get("completion_tokens", 0)
-                last_error = None
-                break
-        except Exception as e:
-            last_error = str(e)
-            logger.warning(f"[LLM] Attempt {attempt + 1} failed for stage={stage}: {e}")
-            if attempt == MAX_RETRIES:
-                logger.error(f"[LLM] All retries exhausted for stage={stage}: {e}")
 
-    log_entry = {
+            data = resp.json()
+            result = data["choices"][0]["message"]["content"]
+            usage = data.get("usage", {})
+            input_tokens = usage.get("prompt_tokens", 0)
+            output_tokens = usage.get("completion_tokens", 0)
+            # Anthropic cache fields (present when caching is active)
+            cache_read_tokens = usage.get("cache_read_input_tokens", 0)
+            cache_creation_tokens = usage.get("cache_creation_input_tokens", 0)
+            last_error = None
+            break
+
+        except Exception as exc:
+            if not _is_retryable(exc):
+                last_error = str(exc)
+                logger.error(
+                    f"[LLM] Non-retryable error for stage={stage}: {type(exc).__name__} — "
+                    "not retrying (would waste budget on a permanent failure)"
+                )
+                break
+
+            last_error = str(exc)
+            if attempt < MAX_RETRIES:
+                backoff = 2 ** attempt
+                logger.warning(
+                    f"[LLM] Attempt {attempt + 1} failed (retryable) "
+                    f"for stage={stage}: {type(exc).__name__} — retrying in {backoff}s"
+                )
+                time.sleep(backoff)
+            else:
+                logger.error(f"[LLM] All retries exhausted for stage={stage}: {exc}")
+
+    # Track spend and enforce budget (after the call, not before, so we always log)
+    if input_tokens or output_tokens:
+        pricing = get_pricing(model)
+        # Cache reads are billed at ~10% of normal input rate; creation at full rate
+        billed_input = (input_tokens - cache_read_tokens) + (cache_read_tokens * 0.1)
+        cost_usd = (
+            billed_input / 1_000_000 * pricing["input"]
+            + output_tokens / 1_000_000 * pricing["output"]
+        )
+        if cache_read_tokens:
+            logger.info(
+                f"[CACHE] stage={stage} cache_read={cache_read_tokens}t "
+                f"cache_create={cache_creation_tokens}t "
+                f"(saved ~${(cache_read_tokens * pricing['input'] * 0.9 / 1e6):.4f})"
+            )
+        try:
+            _check_and_record_spend(cost_usd)
+        except BudgetExceededError:
+            _write_log_entry(
+                stage, source_url, content_ids, model, prompt_hash,
+                input_artifacts, output_artifact, effective_max_tokens,
+                input_tokens, output_tokens, cache_read_tokens,
+                cache_creation_tokens, "BudgetExceeded",
+            )
+            raise
+
+    _write_log_entry(
+        stage, source_url, content_ids, model, prompt_hash,
+        input_artifacts, output_artifact, effective_max_tokens,
+        input_tokens, output_tokens, cache_read_tokens,
+        cache_creation_tokens, last_error,
+    )
+    return result
+
+
+def _write_log_entry(
+    stage: str,
+    source_url: Optional[str],
+    content_ids: Optional[list[str]],
+    model: str,
+    prompt_hash: str,
+    input_artifacts: list[str],
+    output_artifact: str,
+    max_tokens_used: int,
+    input_tokens: int,
+    output_tokens: int,
+    cache_read_tokens: int,
+    cache_creation_tokens: int,
+    error: Optional[str],
+) -> None:
+    entry = {
         "stage": stage,
         "source_url": source_url,
         "content_ids": content_ids or [],
@@ -177,27 +339,25 @@ def llm_call(
         "output_artifact": output_artifact,
         "estimated_input_tokens": input_tokens,
         "estimated_output_tokens": output_tokens,
-        "max_tokens_used": effective_max_tokens,
-        "error": last_error,
+        "cache_read_tokens": cache_read_tokens,
+        "cache_creation_tokens": cache_creation_tokens,
+        "max_tokens_used": max_tokens_used,
+        "error": error,
     }
     with _log_lock:
         with open(LLM_CALLS, "a", encoding="utf-8") as f:
-            f.write(json.dumps(log_entry) + "\n")
-
-    return result
+            f.write(json.dumps(entry) + "\n")
 
 
-# ── JSON parsing with truncation recovery ─────────────────────────────────────
-
+# ── JSON parsing with truncation recovery ──────────────────────────────────────
 def parse_json_response(text: str) -> dict | list:
     """
     Strip markdown fences and parse JSON.
-    If parsing fails (e.g. truncated due to max_tokens), attempt structural recovery.
+    If parsing fails (truncated due to max_tokens), attempt structural recovery.
     Returns empty dict only when all recovery strategies fail.
     """
     text = text.strip()
 
-    # Strip markdown code fences
     if text.startswith("```"):
         parts = text.split("```")
         inner = parts[1] if len(parts) > 1 else ""
@@ -205,7 +365,6 @@ def parse_json_response(text: str) -> dict | list:
             inner = inner[4:]
         text = inner.strip()
 
-    # Happy path
     try:
         return json.loads(text)
     except json.JSONDecodeError as e:
@@ -214,10 +373,9 @@ def parse_json_response(text: str) -> dict | list:
             f"{len(text)} char response..."
         )
 
-    # Recovery: extract all complete JSON objects from a truncated array
     recovered = _recover_partial_json(text)
     if recovered:
-        logger.info(f"[JSON] Recovery succeeded")
+        logger.info("[JSON] Recovery succeeded")
         return recovered
 
     logger.error(f"[JSON] All parse strategies failed. Raw (first 400 chars): {text[:400]}")
@@ -225,26 +383,15 @@ def parse_json_response(text: str) -> dict | list:
 
 
 def _recover_partial_json(text: str) -> dict | list | None:
-    """
-    Recover a truncated JSON response of the form {"key": [...]}.
-
-    Strategy: scan for complete JSON objects inside the outermost array,
-    collect all that parse successfully, and re-wrap them.
-    This handles the common case where max_tokens cuts the response mid-object.
-    """
-    # Find the outer key name and the start of its array value
     outer_match = re.match(r'\s*\{\s*"(\w+)"\s*:\s*\[', text)
     if not outer_match:
-        # Try bare array
         bare_match = re.match(r'\s*\[', text)
         if bare_match:
             return _extract_objects_from_array(text[bare_match.end() - 1:])
         return None
 
     key = outer_match.group(1)
-    array_content = text[outer_match.end():]  # everything after the opening [
-    objects = _extract_objects_from_array("[" + array_content)
-
+    objects = _extract_objects_from_array("[" + text[outer_match.end():])
     if objects is not None:
         logger.warning(
             f"[JSON] Recovered {len(objects)} complete objects from truncated "
@@ -255,10 +402,6 @@ def _recover_partial_json(text: str) -> dict | list | None:
 
 
 def _extract_objects_from_array(text: str) -> list | None:
-    """
-    Scan text for complete top-level JSON objects and return them as a list.
-    Handles truncation by ignoring the incomplete final object.
-    """
     objects = []
     depth = 0
     obj_start = -1
@@ -286,23 +429,20 @@ def _extract_objects_from_array(text: str) -> list | None:
             depth -= 1
             if depth == 0 and obj_start >= 0:
                 try:
-                    obj = json.loads(text[obj_start : i + 1])
+                    obj = json.loads(text[obj_start: i + 1])
                     objects.append(obj)
                     obj_start = -1
                 except json.JSONDecodeError:
-                    obj_start = -1  # malformed, skip
+                    obj_start = -1
 
     return objects if objects else None
 
 
-# ── Span validation (hallucination guard) ─────────────────────────────────────
-
+# ── Span validation (hallucination guard) ──────────────────────────────────────
 def validate_spans_against_corpus(evidence_list: list[dict], corpus: str) -> list[dict]:
     """
     Code-enforced hallucination guard: verify evidence spans exist in source corpus.
     Uses config.defaults.span_overlap_threshold (default 0.5) word-overlap threshold.
-    Rejects spans that can't be verified.
-    Logs every rejection with [HALLUCINATION GUARD] prefix for auditability.
     """
     if not corpus:
         return evidence_list

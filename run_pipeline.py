@@ -75,11 +75,21 @@ from Stages.QA_AND_CONFLICTS_CHECKED import run_qa_and_conflicts
 from Stages.REPORTS_GENERATED import generate_reports
 from Stages.COST_REPORT_GENERATED import generate_cost_report
 from Stages.RESULTS_FINALISED import finalise
+from utils.config import get_budget_limit
+from utils.llm_client import configure_budget, BudgetExceededError
 
 
 def main() -> None:
     pipeline_start = time.time()
     pipeline_errors: list[str] = []
+
+    # Initialise budget guard — raises BudgetExceededError mid-run if limit hit
+    budget = get_budget_limit()
+    if budget is not None:
+        configure_budget(budget)
+        logger.info(f"[PIPELINE] Budget limit: ${budget:.2f} USD")
+    else:
+        logger.info("[PIPELINE] No budget limit configured (pipeline.budget_limit_usd is null)")
 
     # ── Stage 1: Load sources ──────────────────────────────────────────────────
     advance("INIT", "SOURCES_LOADED")
@@ -150,6 +160,10 @@ def main() -> None:
         f"${cost_report.get('total_cost_usd', 0):.4f} USD, "
         f"{duration:.1f}s"
     )
+    if budget is not None:
+        spent = cost_report.get("total_cost_usd", 0)
+        pct = spent / budget * 100
+        logger.info(f"[BUDGET] ${spent:.4f} / ${budget:.2f} used ({pct:.0f}%)")
     print("\n[PIPELINE COMPLETE]")
 
 

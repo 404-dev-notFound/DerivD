@@ -138,3 +138,18 @@ def get_low_confidence_threshold() -> float:
 def get_span_overlap_threshold() -> float:
     """Word-overlap threshold for hallucination span validation."""
     return float(get_default("span_overlap_threshold", _DEFAULT_SPAN_OVERLAP))
+
+
+def get_budget_limit() -> float | None:
+    """
+    Per-run spend cap in USD from config.pipeline.budget_limit_usd.
+    Returns None if unset or null, meaning no limit is enforced.
+    """
+    cfg = load_config()
+    val = cfg.get("pipeline", {}).get("budget_limit_usd")
+    if val is None:
+        return None
+    try:
+        return float(val)
+    except (TypeError, ValueError):
+        return None
