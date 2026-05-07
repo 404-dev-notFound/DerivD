@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils.llm_client import llm_call, parse_json_response
 from utils.config import get_max_tokens_for_stage
 from utils.paths import ENTITIES, ENTITY_SENTIMENT, QA_REPORT, EXTRACTED_CONTENT, REPORTS_DIR
+from utils.content_utils import sanitise_url_for_prompt
 
 logger = logging.getLogger(__name__)
 STAGE = "report_generation"
@@ -150,6 +151,6 @@ def _build_intelligence_payload(
     urls = {c["source_url"] for c in content_items}
     for url in sorted(urls):
         count = sum(1 for c in content_items if c["source_url"] == url)
-        lines.append(f"- {url} ({count} items)")
+        lines.append(f"- {sanitise_url_for_prompt(url)} ({count} items)")
 
     return "\n".join(lines)

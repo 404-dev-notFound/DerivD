@@ -15,6 +15,7 @@ from utils.llm_client import llm_call, parse_json_response, validate_spans_again
 from utils.models import EntitySentiment, SentimentEvidence
 from utils.config import get_max_tokens_for_stage, get_stage_param
 from utils.paths import ENTITIES, EXTRACTED_CONTENT, ENTITY_SENTIMENT
+from utils.content_utils import sanitise_url_for_prompt
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = ENTITY_SENTIMENT
@@ -166,7 +167,7 @@ def _build_user_content(entities: list[dict], content_items: list[dict]) -> str:
             item = content_map[cid]
             body = (item.get("title", "") + " " + item.get("body", "")).strip()[:content_cap]
             lines.append(
-                f"[content_id={cid} source_url={item['source_url']}]\n{body}\n"
+                f"[content_id={cid} source_url={sanitise_url_for_prompt(item['source_url'])}]\n{body}\n"
             )
 
     return "\n".join(lines)

@@ -17,6 +17,7 @@ from utils.llm_client import llm_call, parse_json_response
 from utils.models import QAIssue
 from utils.config import get_low_confidence_threshold, get_max_tokens_for_stage
 from utils.paths import ENTITIES, ENTITY_SENTIMENT, EXTRACTED_CONTENT, QA_REPORT
+from utils.content_utils import sanitise_url_for_prompt
 
 logger = logging.getLogger(__name__)
 OUTPUT_PATH = QA_REPORT
@@ -164,7 +165,7 @@ def _build_user_content(
     lines.append(f"\n## Source URLs seen")
     seen_urls = {c["source_url"] for c in content_items}
     for url in sorted(seen_urls):
-        lines.append(f"- {url}")
+        lines.append(f"- {sanitise_url_for_prompt(url)}")
 
     return "\n".join(lines)
 

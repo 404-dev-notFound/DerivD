@@ -26,8 +26,8 @@ def load_sources(path: str = "sources.json") -> list[str]:
         raise ValueError("sources.json 'sources' must be a non-empty list of URLs")
 
     for s in sources:
-        if not isinstance(s, str) or not s.startswith("http"):
-            raise ValueError(f"Invalid source URL: {s!r}")
+        if not isinstance(s, str) or not s.startswith("https://"):
+            raise ValueError(f"Source URLs must use HTTPS. Got: {s!r}")
 
     logger.info(f"[SOURCES_LOADED] {len(sources)} source(s) loaded")
     return sources

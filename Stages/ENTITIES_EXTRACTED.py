@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.llm_client import llm_call, parse_json_response
-from utils.content_utils import sanitise_text
+from utils.content_utils import sanitise_text, sanitise_url_for_prompt
 from utils.config import get_stage_param
 from utils.paths import EXTRACTED_CONTENT, ENTITIES
 
@@ -112,7 +112,7 @@ def _build_batch_text(batch: list[dict], char_cap: int = 1000) -> str:
         text = f"{title} {body}".strip()[:char_cap]
         lines.append(
             f"---\ncontent_id: {item['content_id']}\n"
-            f"source_url: {item['source_url']}\n"
+            f"source_url: {sanitise_url_for_prompt(item['source_url'])}\n"
             f"text: {text}\n"
         )
     return "\n".join(lines)

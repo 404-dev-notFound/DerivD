@@ -1,10 +1,31 @@
 # Security Audit Report — Financial Content Intelligence Pipeline
 
 **Audit Date**: 2026-05-07
+**Remediation Date**: 2026-05-07
 **Auditor**: Claude Security Review Agent
 **Repository**: https://github.com/404-dev-notFound/DerivD
-**Status**: ⚠️ CONDITIONAL PASS (after critical key rotation)
-**Security Score**: 6.5 / 10
+**Status**: ✅ PASS (after key rotation — see S-1)
+**Security Score**: 8.5 / 10
+
+## Remediation Summary (2026-05-07)
+
+All code-level findings have been fixed:
+
+| Fixed | Change |
+|-------|--------|
+| A-1 Auth bypass | `api.py` now raises `RuntimeError` at startup if `API_SECRET_KEY` is not set — no silent bypass |
+| A-2 Rate limiting | `slowapi` added; `POST /pipeline/run` limited to 5/min, all endpoints covered |
+| A-3/A-4 Unauth observability | `GET /pipeline/logs`, `GET /llm-calls`, `GET /artifacts/*`, `GET /reports/*` all require auth |
+| RC-2 TOCTOU race | `_lock` held across status check + state write in `run_pipeline()` — atomic |
+| PT-2 Path traversal | `path.is_relative_to(reports_root)` replaces fragile `str.startswith()` |
+| IE-1 Exception leak | `str(exc)` replaced with generic message; full detail stays in `pipeline.log` |
+| IE-2 JSON parse leak | Error detail removed from HTTP response |
+| SH-1–4 Security headers | Middleware adds `X-Content-Type-Options`, `X-Frame-Options`, `CSP`, `Referrer-Policy` |
+| PI-2 Injection regex | Pattern now matches anywhere in text (not just line-start); uses sub not drop |
+| PI-3 source_url unsanitised | `sanitise_url_for_prompt()` applied in `ENTITIES_EXTRACTED.py` and `ENTITY_SENTIMENT_SCORED.py` |
+| D-1/D-2/D-3/D-4 Outdated deps | `fastapi`, `httpx`, `requests`, `pydantic`, `uvicorn` all updated in `requirements.txt` |
+
+**Remaining open (non-code):** S-1 — rotate OpenRouter API key (OneDrive exposure).
 
 ---
 

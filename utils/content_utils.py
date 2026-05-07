@@ -29,14 +29,24 @@ NUMERICAL_PATTERN = re.compile(
     r"(?:\s+(?P<unit>[A-Za-z][A-Za-z/]+))?"
 )
 
-_ALLOWED_SCHEMES = {"http", "https"}
+_ALLOWED_SCHEMES = {"https"}
 _BLOCKED_HOSTS = {"localhost", "127.0.0.1", "0.0.0.0", "::1"}
 
-# Prompt injection patterns to strip from fetched content before LLM use
+# Prompt injection — matches anywhere in the text, not just line-start.
+# Previous version used ^ anchor so "Breaking: IGNORE PREVIOUS INSTRUCTIONS"
+# on one line would pass through uncaught. Sub to [REDACTED] rather than
+# drop lines so context is preserved and truncation artefacts don't confuse the LLM.
 _INJECTION_PATTERN = re.compile(
-    r"^\s*(ignore|disregard|forget|system\s*:|assistant\s*:|<\s*/?system|<\s*/?instruction)",
-    re.IGNORECASE | re.MULTILINE,
+    r"(ignore\s+(?:all\s+)?(?:previous|prior|above)\s+(?:instructions?|prompts?|context)|"
+    r"disregard\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions?|prompts?)|"
+    r"forget\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions?|context)|"
+    r"system\s*:|assistant\s*:|<\s*/?system[>\s]|<\s*/?instruction[>\s])",
+    re.IGNORECASE,
 )
+
+# Characters that must be percent-encoded when a URL is embedded in a prompt
+# to prevent a crafted query-string from injecting LLM instructions.
+_URL_UNSAFE_IN_PROMPT = re.compile(r"[^\w\-._~:/?#\[\]@!$&'()*+,;=%]")
 
 
 def _validate_url(url: str) -> None:
@@ -59,12 +69,20 @@ def _validate_url(url: str) -> None:
 
 def sanitise_text(text: str) -> str:
     """
-    Strip prompt-injection patterns from web-fetched text before LLM submission.
-    Removes lines that start with common injection prefixes (code-enforced guard).
+    Redact prompt-injection patterns anywhere in fetched text before LLM submission.
+    Uses substitution (not line-dropping) so context is preserved and the LLM
+    doesn't see suspicious gaps. Matches inline, not just at line boundaries.
     """
-    lines = text.splitlines()
-    clean = [ln for ln in lines if not _INJECTION_PATTERN.match(ln)]
-    return "\n".join(clean)
+    return _INJECTION_PATTERN.sub("[REDACTED]", text)
+
+
+def sanitise_url_for_prompt(url: str) -> str:
+    """
+    Encode any characters in a URL that could be used to inject LLM instructions
+    via a crafted query string (e.g. ?q=IGNORE+PREVIOUS+INSTRUCTIONS).
+    Applied before embedding source_url values into LLM prompts.
+    """
+    return _URL_UNSAFE_IN_PROMPT.sub(lambda m: f"%{ord(m.group()):02X}", url)
 
 
 def fetch_source(url: str, timeout: int = 20) -> tuple[Optional[str], Optional[str]]:

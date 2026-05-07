@@ -21,6 +21,7 @@ import logging
 import os
 import re
 import datetime
+import threading
 from typing import Optional
 
 import httpx
@@ -39,6 +40,10 @@ logger = logging.getLogger(__name__)
 
 OPENROUTER_BASE = "https://openrouter.ai/api/v1/chat/completions"
 MAX_RETRIES = 2
+
+# Serialise writes to llm_calls.jsonl — concurrent API-triggered pipeline runs
+# would otherwise interleave partial JSON lines, corrupting the log.
+_log_lock = threading.Lock()
 
 # ── Hallucination skill — loaded once from hallucination.md ───────────────────
 # hallucination.md is the single source of truth for anti-hallucination rules.
@@ -175,8 +180,9 @@ def llm_call(
         "max_tokens_used": effective_max_tokens,
         "error": last_error,
     }
-    with open(LLM_CALLS, "a", encoding="utf-8") as f:
-        f.write(json.dumps(log_entry) + "\n")
+    with _log_lock:
+        with open(LLM_CALLS, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_entry) + "\n")
 
     return result
 
